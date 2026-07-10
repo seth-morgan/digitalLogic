@@ -8,6 +8,7 @@
 #include "digitallogic/model/PinId.h"
 #include "digitallogic/model/WireValidation.h"
 #include "digitallogic/model/SourceNode.h"
+#include "digitallogic/model/TargetNode.h"
 #include "digitallogic/model/Wire.h"
 
 #include <QHash>
@@ -55,9 +56,16 @@ public:
     [[nodiscard]] std::optional<ComponentId> addGate(GateKind kind, const QPointF& position);
 
     /**
+     * @brief Adds a fixed output target at the given canvas position.
+     * @param position Sandbox coordinates.
+     * @return Id of the created target.
+     */
+    [[nodiscard]] ComponentId addTarget(const QPointF& position);
+
+    /**
      * @brief Connects an output pin to an input pin.
      * @param from Output pin (source output or gate output).
-     * @param to Input pin on a gate.
+     * @param to Input pin on a gate or challenge target.
      * @return True when the wire was added.
      */
     [[nodiscard]] bool addWire(const PinId& from, const PinId& to);
@@ -65,7 +73,7 @@ public:
     /**
      * @brief Validates a proposed wire without mutating the circuit.
      * @param from Output pin.
-     * @param to Input pin on a gate.
+     * @param to Input pin on a gate or challenge target.
      * @return Validation outcome.
      */
     [[nodiscard]] WireValidationResult validateWire(const PinId& from, const PinId& to) const;
@@ -94,12 +102,15 @@ public:
     [[nodiscard]] bool setComponentPosition(ComponentId id, const QPointF& position);
 
     [[nodiscard]] const QVector<SourceNode>& sources() const noexcept { return m_sources; }
+    [[nodiscard]] const QVector<TargetNode>& targets() const noexcept { return m_targets; }
     [[nodiscard]] const std::vector<std::unique_ptr<Gate>>& gates() const noexcept { return m_gates; }
     [[nodiscard]] const QVector<Wire>& wires() const noexcept { return m_wires; }
     [[nodiscard]] const QHash<ComponentId, ComponentPlacement>& placements() const noexcept { return m_placements; }
 
     [[nodiscard]] SourceNode* findSource(ComponentId id);
     [[nodiscard]] const SourceNode* findSource(ComponentId id) const;
+    [[nodiscard]] TargetNode* findTarget(ComponentId id);
+    [[nodiscard]] const TargetNode* findTarget(ComponentId id) const;
     [[nodiscard]] Gate* findGate(ComponentId id);
     [[nodiscard]] const Gate* findGate(ComponentId id) const;
 
@@ -120,8 +131,14 @@ public:
 
     /**
      * @brief Removes all gates and wires; resets source values to false.
+     * @param keepTargets When true, target nodes and their placements are preserved.
      */
-    void clearGatesAndWires();
+    void clearGatesAndWires(bool keepTargets = false);
+
+    /**
+     * @brief Removes all components and topology from the circuit.
+     */
+    void clearAll();
 
     /**
      * @brief Adds a source with an explicit id (for deserialization).
@@ -135,6 +152,7 @@ public:
 
 private:
     QVector<SourceNode> m_sources;
+    QVector<TargetNode> m_targets;
     std::vector<std::unique_ptr<Gate>> m_gates;
     QVector<Wire> m_wires;
     QHash<ComponentId, ComponentPlacement> m_placements;

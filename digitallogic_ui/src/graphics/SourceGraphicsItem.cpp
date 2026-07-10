@@ -23,6 +23,7 @@ SourceGraphicsItem::SourceGraphicsItem(const ComponentId componentId, CircuitCon
     auto* title = new QGraphicsTextItem(QStringLiteral("SRC"), this);
     title->setPos(8.0, 4.0);
     title->setDefaultTextColor(Qt::black);
+    m_title = title;
 
     m_label = new QGraphicsTextItem(QStringLiteral("0"), this);
     m_label->setFont(QFont(QStringLiteral("Arial"), 14, QFont::Bold));
@@ -48,6 +49,19 @@ void SourceGraphicsItem::refreshFromModel(const SignalValue value)
     if (m_outputPin != nullptr) {
         m_outputPin->setSignalValue(value, true);
     }
+}
+
+void SourceGraphicsItem::setDisplayLabel(const QString& label)
+{
+    if (m_title != nullptr) {
+        m_title->setPlainText(label);
+    }
+}
+
+void SourceGraphicsItem::setLocked(const bool locked)
+{
+    m_locked = locked;
+    setFlag(QGraphicsItem::ItemIsMovable, !locked);
 }
 
 void SourceGraphicsItem::clearSimulationHighlight()

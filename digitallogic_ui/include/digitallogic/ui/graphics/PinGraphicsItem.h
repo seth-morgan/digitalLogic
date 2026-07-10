@@ -18,7 +18,8 @@ public:
     enum class PinRole {
         SourceOutput,
         GateInput,
-        GateOutput
+        GateOutput,
+        TargetInput
     };
 
     PinGraphicsItem(PinId pinId, PinRole role, CircuitController* controller, QGraphicsItem* parent = nullptr);

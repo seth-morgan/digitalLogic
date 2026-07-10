@@ -26,6 +26,8 @@ public:
 
     void refreshFromModel(SignalValue value);
     void updateValueLabel(SignalValue value);
+    void setDisplayLabel(const QString& label);
+    void setLocked(bool locked);
     void clearSimulationHighlight();
     void updateWirePaths();
 
@@ -37,8 +39,10 @@ private:
     ComponentId m_componentId;
     CircuitController* m_controller;
     QGraphicsRectItem* m_body{nullptr};
+    QGraphicsTextItem* m_title{nullptr};
     QGraphicsTextItem* m_label{nullptr};
     PinGraphicsItem* m_outputPin{nullptr};
+    bool m_locked{false};
 };
 
 } // namespace digitallogic::ui

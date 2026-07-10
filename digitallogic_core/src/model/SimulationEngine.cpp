@@ -136,7 +136,8 @@ SignalValue SimulationEngine::evaluateNot(const SignalValue input)
     return NotGate(ComponentId{}).evaluate(QVector<SignalValue>{input});
 }
 
-std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit)
+std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit,
+                                                        const QHash<ComponentId, SignalValue>* sourceOverrides)
 {
     QString error;
     const std::optional<QVector<ComponentId>> order = topologicalOrder(circuit, error);
@@ -147,7 +148,14 @@ std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit)
     QHash<PinId, SignalValue> resolved;
 
     for (const SourceNode& source : circuit.sources()) {
-        resolved.insert(sourceOutputPin(source.id()), source.value());
+        SignalValue value = source.value();
+        if (sourceOverrides != nullptr) {
+            const auto overrideIt = sourceOverrides->find(source.id());
+            if (overrideIt != sourceOverrides->end()) {
+                value = overrideIt.value();
+            }
+        }
+        resolved.insert(sourceOutputPin(source.id()), value);
     }
 
     for (const ComponentId gateId : order.value()) {

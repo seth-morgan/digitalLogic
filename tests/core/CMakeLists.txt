@@ -46,3 +46,15 @@ add_test(NAME digitallogic_gate_tests COMMAND digitallogic_gate_tests)
 add_test(NAME digitallogic_circuit_tests COMMAND digitallogic_circuit_tests)
 add_test(NAME digitallogic_serializer_tests COMMAND digitallogic_serializer_tests)
 add_test(NAME digitallogic_simulation_tests COMMAND digitallogic_simulation_tests)
+
+add_executable(digitallogic_challenge_tests
+    ChallengeValidatorTests.cpp
+)
+
+target_link_libraries(digitallogic_challenge_tests
+    PRIVATE
+        digitallogic_core
+        Qt6::Test
+)
+
+add_test(NAME digitallogic_challenge_tests COMMAND digitallogic_challenge_tests)

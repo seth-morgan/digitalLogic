@@ -10,7 +10,7 @@ const char* wireValidationMessage(const WireValidationResult result)
     case WireValidationResult::SameComponent:
         return "Cannot connect a component to itself.";
     case WireValidationResult::InvalidDestination:
-        return "Wires must end on a gate input pin.";
+        return "Wires must end on a gate or output input pin.";
     case WireValidationResult::InvalidSource:
         return "Wires must start from a source or gate output pin.";
     case WireValidationResult::InputAlreadyConnected:

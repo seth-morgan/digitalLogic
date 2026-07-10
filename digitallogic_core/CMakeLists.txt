@@ -13,6 +13,9 @@ add_library(digitallogic_core STATIC
     src/model/WireValidation.cpp
     src/model/CircuitSerializer.cpp
     src/model/Circuit.cpp
+    src/model/TargetNode.cpp
+    src/challenge/ChallengeCatalog.cpp
+    src/challenge/ChallengeValidator.cpp
     src/model/SimulationEngine.cpp
 )
 

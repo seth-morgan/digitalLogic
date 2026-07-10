@@ -2,6 +2,7 @@
 
 #include "digitallogic/model/Gate.h"
 
+#include <QHash>
 #include <QPushButton>
 
 namespace digitallogic::ui {
@@ -15,6 +16,9 @@ class GatePaletteWidget final : public QWidget {
 public:
     explicit GatePaletteWidget(QWidget* parent = nullptr);
 
+    void setChallengeMode(bool enabled);
+    void updateGateBudget(const QHash<GateKind, int>& remaining);
+
 signals:
     void gateDragStarted(GateKind kind);
 
@@ -23,10 +27,13 @@ protected:
 
 private:
     void startGateDrag(GateKind kind, QWidget* sourceWidget);
+    void refreshButtonState(QPushButton* button, GateKind kind, const QString& baseLabel);
 
     QPushButton* m_andButton{nullptr};
     QPushButton* m_orButton{nullptr};
     QPushButton* m_notButton{nullptr};
+    bool m_challengeMode{false};
+    QHash<GateKind, int> m_gateBudget;
 };
 
 } // namespace digitallogic::ui

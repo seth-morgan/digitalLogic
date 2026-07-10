@@ -11,6 +11,14 @@ namespace digitallogic {
 }
 
 /**
+ * @brief Pin index for a target input (targets have a single input on pin 0).
+ */
+[[nodiscard]] inline constexpr int targetInputPinIndex() noexcept
+{
+    return 0;
+}
+
+/**
  * @brief Pin index for a gate input in the range [0, inputCount).
  */
 [[nodiscard]] inline constexpr int gateInputPinIndex(const int inputIndex) noexcept

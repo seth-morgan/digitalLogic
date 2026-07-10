@@ -14,6 +14,14 @@ ComponentId Circuit::addSource(const QPointF& position, const SignalValue initia
     return id;
 }
 
+ComponentId Circuit::addTarget(const QPointF& position)
+{
+    const ComponentId id = makeComponentId();
+    m_targets.emplace_back(id);
+    m_placements.insert(id, ComponentPlacement{id, position});
+    return id;
+}
+
 std::optional<ComponentId> Circuit::addGate(const GateKind kind, const QPointF& position)
 {
     const ComponentId id = makeComponentId();
@@ -45,11 +53,16 @@ WireValidationResult Circuit::validateWire(const PinId& from, const PinId& to) c
     }
 
     const Gate* destinationGate = findGate(to.componentId);
-    if (destinationGate == nullptr) {
+    const TargetNode* destinationTarget = findTarget(to.componentId);
+    if (destinationGate == nullptr && destinationTarget == nullptr) {
         return WireValidationResult::InvalidDestination;
     }
 
-    if (to.pinIndex < 0 || to.pinIndex >= destinationGate->inputCount()) {
+    if (destinationGate != nullptr) {
+        if (to.pinIndex < 0 || to.pinIndex >= destinationGate->inputCount()) {
+            return WireValidationResult::InvalidDestination;
+        }
+    } else if (to.pinIndex != targetInputPinIndex()) {
         return WireValidationResult::InvalidDestination;
     }
 
@@ -151,6 +164,26 @@ const SourceNode* Circuit::findSource(const ComponentId id) const
     return nullptr;
 }
 
+TargetNode* Circuit::findTarget(const ComponentId id)
+{
+    for (TargetNode& target : m_targets) {
+        if (target.id() == id) {
+            return &target;
+        }
+    }
+    return nullptr;
+}
+
+const TargetNode* Circuit::findTarget(const ComponentId id) const
+{
+    for (const TargetNode& target : m_targets) {
+        if (target.id() == id) {
+            return &target;
+        }
+    }
+    return nullptr;
+}
+
 Gate* Circuit::findGate(const ComponentId id)
 {
     for (const auto& gate : m_gates) {
@@ -193,26 +226,46 @@ bool Circuit::toggleSource(const ComponentId id)
     return true;
 }
 
-void Circuit::clearGatesAndWires()
+void Circuit::clearGatesAndWires(const bool keepTargets)
 {
     m_gates.clear();
     m_wires.clear();
 
-    QHash<ComponentId, ComponentPlacement> sourcePlacements;
+    QHash<ComponentId, ComponentPlacement> preservedPlacements;
     for (const SourceNode& source : m_sources) {
         const auto placementIt = m_placements.find(source.id());
         if (placementIt != m_placements.end()) {
-            sourcePlacements.insert(source.id(), placementIt.value());
+            preservedPlacements.insert(source.id(), placementIt.value());
         }
         findSource(source.id())->setValue(SignalValue::False);
     }
 
-    m_placements = sourcePlacements;
+    if (keepTargets) {
+        for (const TargetNode& target : m_targets) {
+            const auto placementIt = m_placements.find(target.id());
+            if (placementIt != m_placements.end()) {
+                preservedPlacements.insert(target.id(), placementIt.value());
+            }
+        }
+    } else {
+        m_targets.clear();
+    }
+
+    m_placements = preservedPlacements;
+}
+
+void Circuit::clearAll()
+{
+    m_sources.clear();
+    m_targets.clear();
+    m_gates.clear();
+    m_wires.clear();
+    m_placements.clear();
 }
 
 bool Circuit::addSourceWithId(const ComponentId id, const QPointF& position, const SignalValue initialValue)
 {
-    if (findSource(id) != nullptr || findGate(id) != nullptr) {
+    if (findSource(id) != nullptr || findGate(id) != nullptr || findTarget(id) != nullptr) {
         return false;
     }
 
@@ -223,7 +276,7 @@ bool Circuit::addSourceWithId(const ComponentId id, const QPointF& position, con
 
 bool Circuit::addGateWithId(const ComponentId id, const GateKind kind, const QPointF& position)
 {
-    if (findSource(id) != nullptr || findGate(id) != nullptr) {
+    if (findSource(id) != nullptr || findGate(id) != nullptr || findTarget(id) != nullptr) {
         return false;
     }
 

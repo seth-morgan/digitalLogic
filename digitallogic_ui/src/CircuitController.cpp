@@ -7,6 +7,7 @@
 #include "digitallogic/ui/graphics/GateGraphicsItem.h"
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
 #include "digitallogic/ui/graphics/SourceGraphicsItem.h"
+#include "digitallogic/ui/graphics/TargetGraphicsItem.h"
 #include "digitallogic/ui/graphics/WireGraphicsItem.h"
 
 #include <QFile>
@@ -49,11 +50,78 @@ CircuitController::CircuitController(SandboxView* view, QObject* parent)
 
 void CircuitController::initializeDefaultSources()
 {
+    m_challengeMode = false;
+    m_challengeTargetId = {};
+    m_challengeSourceIdsByLabel.clear();
+    clearChallengeGateBudget();
+
     const ComponentId sourceA = m_circuit.addSource(QPointF(80.0, 120.0), SignalValue::False);
     const ComponentId sourceB = m_circuit.addSource(QPointF(80.0, 240.0), SignalValue::False);
     createSourceItem(sourceA, QPointF(80.0, 120.0));
     createSourceItem(sourceB, QPointF(80.0, 240.0));
     emit circuitChanged();
+}
+
+void CircuitController::restoreSandboxMode()
+{
+    removeAllGraphics();
+    m_circuit.clearAll();
+    m_challengeMode = false;
+    m_challengeTargetId = {};
+    m_challengeSourceIdsByLabel.clear();
+    clearChallengeGateBudget();
+    initializeDefaultSources();
+}
+
+void CircuitController::loadChallengeLevel(const ChallengeLevel& level, QHash<QString, ComponentId>& outSourceIdsByLabel,
+                                           ComponentId& outTargetId)
+{
+    removeAllGraphics();
+    m_circuit.clearAll();
+    m_challengeMode = true;
+    m_challengeSourceIdsByLabel.clear();
+    outSourceIdsByLabel.clear();
+
+    for (const ChallengeSourceSpec& sourceSpec : level.sources) {
+        const ComponentId sourceId = m_circuit.addSource(sourceSpec.position, SignalValue::False);
+        m_challengeSourceIdsByLabel.insert(sourceSpec.label, sourceId);
+        outSourceIdsByLabel.insert(sourceSpec.label, sourceId);
+        createSourceItem(sourceId, sourceSpec.position, sourceSpec.label, true);
+    }
+
+    outTargetId = m_circuit.addTarget(level.targetPosition);
+    m_challengeTargetId = outTargetId;
+    createTargetItem(outTargetId, level.targetPosition);
+
+    emit circuitChanged();
+    emit statusMessage(level.description);
+}
+
+void CircuitController::setChallengeGateBudget(const QHash<GateKind, int>& remaining)
+{
+    m_challengeGateBudgetTotal = remaining;
+    m_challengeGateBudget = remaining;
+    emit gateBudgetChanged();
+}
+
+void CircuitController::clearChallengeGateBudget()
+{
+    m_challengeGateBudget.clear();
+    m_challengeGateBudgetTotal.clear();
+    emit gateBudgetChanged();
+}
+
+bool CircuitController::isProtectedComponent(const ComponentId id) const
+{
+    if (!m_challengeMode) {
+        return false;
+    }
+
+    if (id == m_challengeTargetId) {
+        return true;
+    }
+
+    return m_challengeSourceIdsByLabel.values().contains(id);
 }
 
 void CircuitController::beginWireDrag(PinGraphicsItem* fromPin, const QPointF& scenePos)
@@ -105,7 +173,8 @@ void CircuitController::endWireDrag(const QPointF& scenePos)
 
     PinGraphicsItem* targetPin = findPinAtScenePos(scenePos);
     if (targetPin != nullptr && m_wireDragFromPin != nullptr && targetPin != m_wireDragFromPin) {
-        if (targetPin->role() == PinGraphicsItem::PinRole::GateInput) {
+        if (targetPin->role() == PinGraphicsItem::PinRole::GateInput
+            || targetPin->role() == PinGraphicsItem::PinRole::TargetInput) {
             (void)tryConnectPins(m_wireDragFromPin->pinId(), targetPin->pinId());
         } else {
             emit statusMessage(QString::fromUtf8(wireValidationMessage(WireValidationResult::InvalidDestination)));
@@ -191,6 +260,14 @@ void CircuitController::toggleSource(const ComponentId sourceId)
 
 bool CircuitController::placeGateFromPalette(const GateKind kind, const QPointF& scenePosition)
 {
+    if (m_challengeMode) {
+        const int remaining = m_challengeGateBudget.value(kind, 0);
+        if (remaining <= 0) {
+            emit statusMessage(QStringLiteral("No more gates of this type are available for this level."));
+            return false;
+        }
+    }
+
     const std::optional<ComponentId> gateId = m_circuit.addGate(kind, scenePosition);
     if (!gateId.has_value()) {
         return false;
@@ -202,6 +279,12 @@ bool CircuitController::placeGateFromPalette(const GateKind kind, const QPointF&
     }
 
     createGateItem(gateId.value(), kind, inputCount, scenePosition);
+
+    if (m_challengeMode && m_challengeGateBudget.contains(kind)) {
+        m_challengeGateBudget[kind] -= 1;
+        emit gateBudgetChanged();
+    }
+
     emit circuitChanged();
     return true;
 }
@@ -254,7 +337,16 @@ void CircuitController::deleteSelection()
         }
 
         if (auto* gateItem = dynamic_cast<GateGraphicsItem*>(item)) {
+            if (isProtectedComponent(gateItem->componentId())) {
+                continue;
+            }
             if (m_circuit.removeGate(gateItem->componentId())) {
+                if (m_challengeMode) {
+                    const GateKind kind = gateItem->kind();
+                    if (m_challengeGateBudget.contains(kind)) {
+                        m_challengeGateBudget[kind] += 1;
+                    }
+                }
                 removeGateItem(gateItem);
                 ++removedCount;
             }
@@ -262,6 +354,9 @@ void CircuitController::deleteSelection()
     }
 
     if (removedCount > 0) {
+        if (m_challengeMode) {
+            emit gateBudgetChanged();
+        }
         emit circuitChanged();
         emit statusMessage(QStringLiteral("Deleted %1 item(s).").arg(removedCount));
     }
@@ -326,7 +421,7 @@ void CircuitController::clearCanvas()
         removeWireItem(m_wireItems.front());
     }
 
-    m_circuit.clearGatesAndWires();
+    m_circuit.clearGatesAndWires(m_challengeMode);
 
     for (const SourceNode& source : m_circuit.sources()) {
         if (SourceGraphicsItem* sourceItem = findSourceItem(source.id())) {
@@ -335,8 +430,20 @@ void CircuitController::clearCanvas()
         }
     }
 
+    for (const TargetNode& target : m_circuit.targets()) {
+        if (TargetGraphicsItem* targetItem = findTargetItem(target.id())) {
+            targetItem->clearSimulationHighlight();
+        }
+    }
+
+    if (m_challengeMode) {
+        m_challengeGateBudget = m_challengeGateBudgetTotal;
+        emit gateBudgetChanged();
+    }
+
     emit circuitChanged();
-    emit statusMessage(QStringLiteral("Canvas cleared."));
+    emit statusMessage(m_challengeMode ? QStringLiteral("Level reset.")
+                                     : QStringLiteral("Canvas cleared."));
 }
 
 bool CircuitController::saveToFile(const QString& path)
@@ -398,7 +505,7 @@ void CircuitController::removeAllGraphics()
     QVector<QGraphicsItem*> removable;
     for (QGraphicsItem* item : m_view->scene()->items()) {
         if (dynamic_cast<SourceGraphicsItem*>(item) != nullptr || dynamic_cast<GateGraphicsItem*>(item) != nullptr
-            || dynamic_cast<WireGraphicsItem*>(item) != nullptr) {
+            || dynamic_cast<TargetGraphicsItem*>(item) != nullptr || dynamic_cast<WireGraphicsItem*>(item) != nullptr) {
             removable.push_back(item);
         }
     }
@@ -416,6 +523,11 @@ void CircuitController::rebuildGraphics()
     for (const SourceNode& source : m_circuit.sources()) {
         const ComponentPlacement placement = m_circuit.placements().value(source.id());
         createSourceItem(source.id(), placement.position);
+    }
+
+    for (const TargetNode& target : m_circuit.targets()) {
+        const ComponentPlacement placement = m_circuit.placements().value(target.id());
+        createTargetItem(target.id(), placement.position);
     }
 
     for (const auto& gatePtr : m_circuit.gates()) {
@@ -474,6 +586,23 @@ SourceGraphicsItem* CircuitController::findSourceItem(const ComponentId id) cons
         if (auto* source = dynamic_cast<SourceGraphicsItem*>(item)) {
             if (source->componentId() == id) {
                 return source;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+TargetGraphicsItem* CircuitController::findTargetItem(const ComponentId id) const
+{
+    if (m_view == nullptr || m_view->scene() == nullptr) {
+        return nullptr;
+    }
+
+    for (QGraphicsItem* item : m_view->scene()->items()) {
+        if (auto* target = dynamic_cast<TargetGraphicsItem*>(item)) {
+            if (target->componentId() == id) {
+                return target;
             }
         }
     }
@@ -545,6 +674,17 @@ void CircuitController::applySimulationResults(const QHash<PinId, SignalValue>& 
             sourceItem->refreshFromModel(source.value());
         }
     }
+
+    for (const TargetNode& target : m_circuit.targets()) {
+        const PinId targetInput{target.id(), targetInputPinIndex()};
+        const auto targetIt = pinValues.find(targetInput);
+        if (targetIt == pinValues.end()) {
+            continue;
+        }
+        if (TargetGraphicsItem* targetItem = findTargetItem(target.id())) {
+            targetItem->setInputSignal(targetIt.value(), true);
+        }
+    }
 }
 
 void CircuitController::clearSimulationVisuals()
@@ -570,6 +710,8 @@ void CircuitController::clearSimulationVisuals()
             if (const SourceNode* source = m_circuit.findSource(sourceItem->componentId())) {
                 sourceItem->updateValueLabel(source->value());
             }
+        } else if (auto* targetItem = dynamic_cast<TargetGraphicsItem*>(item)) {
+            targetItem->clearSimulationHighlight();
         }
         collectPins(item, pins);
     }
@@ -579,9 +721,14 @@ void CircuitController::clearSimulationVisuals()
     }
 }
 
-void CircuitController::createSourceItem(const ComponentId id, const QPointF& position)
+void CircuitController::createSourceItem(const ComponentId id, const QPointF& position, const QString& label,
+                                         const bool locked)
 {
     auto* sourceItem = new SourceGraphicsItem(id, this);
+    if (!label.isEmpty()) {
+        sourceItem->setDisplayLabel(label);
+    }
+    sourceItem->setLocked(locked);
     sourceItem->setPos(position);
     m_view->scene()->addItem(sourceItem);
 
@@ -589,6 +736,14 @@ void CircuitController::createSourceItem(const ComponentId id, const QPointF& po
         sourceItem->updateValueLabel(source->value());
         sourceItem->clearSimulationHighlight();
     }
+}
+
+void CircuitController::createTargetItem(const ComponentId id, const QPointF& position)
+{
+    auto* targetItem = new TargetGraphicsItem(id, this);
+    targetItem->setPos(position);
+    m_view->scene()->addItem(targetItem);
+    targetItem->clearSimulationHighlight();
 }
 
 void CircuitController::createGateItem(const ComponentId id, const GateKind kind, const int inputCount, const QPointF& position)

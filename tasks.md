@@ -4,7 +4,7 @@
 
 **Active phase:** Phase 5c — More gates (future)
 
-Phases 0–5b are complete. See [Phase 5c](#phase-5c--more-gates-future) for next work.
+Phases 0–5b and Phase 6 are complete. See [Phase 5c](#phase-5c--more-gates-future) for next work.
 
 ---
 
@@ -72,6 +72,15 @@ Phases 0–5b are complete. See [Phase 5c](#phase-5c--more-gates-future) for nex
 ### Phase 5c — More gates (future)
 
 - [ ] Additional gates (NAND, XOR, etc.)
+
+## Phase 6 — Challenge mode (complete)
+
+- [x] Toolbar **Challenge** opens level picker dialog
+- [x] Two simple levels: Level 1 (AND), Level 2 (OR)
+- [x] Fixed sources (A, B), output target (OUT), and limited gate budget per level
+- [x] **Check Solution** validates all input combinations; **Next Level** unlocks on success
+- [x] `ChallengeValidator`, `ChallengeCatalog`, and `TargetNode` in core
+- [x] QTest coverage for challenge validation
 
 ---
 

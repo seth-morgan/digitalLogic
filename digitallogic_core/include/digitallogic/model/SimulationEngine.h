@@ -26,9 +26,11 @@ public:
     /**
      * @brief Runs simulation over the given circuit.
      * @param circuit Circuit topology and source values.
+     * @param sourceOverrides Optional per-source values used instead of stored source values.
      * @return Resolved pin values when successful.
      */
-    [[nodiscard]] static std::optional<QVector<PinSignal>> run(const Circuit& circuit);
+    [[nodiscard]] static std::optional<QVector<PinSignal>> run(
+        const Circuit& circuit, const QHash<ComponentId, SignalValue>* sourceOverrides = nullptr);
 
     /**
      * @brief Static gate helpers exposed for unit testing.
