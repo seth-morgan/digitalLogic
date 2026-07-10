@@ -2,11 +2,14 @@
 
 #include "digitallogic/model/Gate.h"
 #include "digitallogic/ui/CircuitController.h"
+#include "digitallogic/ui/graphics/PinGraphicsItem.h"
 
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QGraphicsScene>
+#include <QKeyEvent>
 #include <QMimeData>
+#include <QMouseEvent>
 #include <cmath>
 #include <QPainter>
 
@@ -23,11 +26,77 @@ SandboxView::SandboxView(QWidget* parent)
     scene->setSceneRect(0.0, 0.0, 1200.0, 700.0);
     setScene(scene);
     setRenderHint(QPainter::Antialiasing, true);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
     setAcceptDrops(true);
-    setDragMode(QGraphicsView::RubberBandDrag);
+    setDragMode(QGraphicsView::NoDrag);
+    setFocusPolicy(Qt::StrongFocus);
 
     m_circuitController = new CircuitController(this, this);
     m_circuitController->initializeDefaultSources();
+}
+
+bool SandboxView::tryBeginWireAt(const QPointF& scenePos)
+{
+    PinGraphicsItem* pin = m_circuitController->findPinAtScenePos(scenePos);
+    if (pin == nullptr) {
+        return false;
+    }
+
+    if (pin->role() != PinGraphicsItem::PinRole::SourceOutput && pin->role() != PinGraphicsItem::PinRole::GateOutput) {
+        return false;
+    }
+
+    m_circuitController->beginWireDrag(pin, scenePos);
+    setCursor(Qt::CrossCursor);
+    return true;
+}
+
+void SandboxView::mousePressEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton) {
+        const QPointF scenePos = mapToScene(event->position().toPoint());
+        if (tryBeginWireAt(scenePos)) {
+            event->accept();
+            return;
+        }
+    }
+
+    QGraphicsView::mousePressEvent(event);
+    setFocus();
+}
+
+void SandboxView::mouseMoveEvent(QMouseEvent* event)
+{
+    if (m_circuitController->isWireDragInProgress()) {
+        m_circuitController->updateWireDrag(mapToScene(event->position().toPoint()));
+        event->accept();
+        return;
+    }
+
+    QGraphicsView::mouseMoveEvent(event);
+}
+
+void SandboxView::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton && m_circuitController->isWireDragInProgress()) {
+        m_circuitController->endWireDrag(mapToScene(event->position().toPoint()));
+        unsetCursor();
+        event->accept();
+        return;
+    }
+
+    QGraphicsView::mouseReleaseEvent(event);
+}
+
+void SandboxView::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
+        m_circuitController->deleteSelection();
+        event->accept();
+        return;
+    }
+
+    QGraphicsView::keyPressEvent(event);
 }
 
 void SandboxView::dragEnterEvent(QDragEnterEvent* event)

@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 
+class QLabel;
+
 namespace digitallogic::ui {
 
 class GatePaletteWidget;
@@ -20,10 +22,14 @@ public:
 private:
     void setupUi();
     void setupToolbar();
+    void saveCircuit();
+    void openCircuit();
+    void showStatusMessage(const QString& message);
 
     SandboxView* m_sandboxView{nullptr};
     GatePaletteWidget* m_gatePalette{nullptr};
     SimulationController* m_simulationController{nullptr};
+    QLabel* m_statusLabel{nullptr};
 };
 
 } // namespace digitallogic::ui

@@ -27,8 +27,13 @@ public:
 
     void setOutputSignal(SignalValue value, bool simulated);
     void clearSimulationHighlight();
+    void updateWirePaths();
+
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
 private:
+    void applySelectionStyle();
     [[nodiscard]] static QString gateLabel(GateKind kind);
 
     ComponentId m_componentId;

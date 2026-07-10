@@ -1,6 +1,7 @@
 #pragma once
 
 #include "digitallogic/model/ComponentId.h"
+#include "digitallogic/model/PinIndices.h"
 #include "digitallogic/model/SignalValue.h"
 
 #include <QGraphicsItemGroup>
@@ -26,9 +27,11 @@ public:
     void refreshFromModel(SignalValue value);
     void updateValueLabel(SignalValue value);
     void clearSimulationHighlight();
+    void updateWirePaths();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
 private:
     ComponentId m_componentId;

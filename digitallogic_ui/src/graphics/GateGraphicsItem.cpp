@@ -1,5 +1,6 @@
 #include "digitallogic/ui/graphics/GateGraphicsItem.h"
 
+#include "digitallogic/model/PinIndices.h"
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/SignalColors.h"
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
@@ -38,11 +39,26 @@ GateGraphicsItem::GateGraphicsItem(const ComponentId componentId, const GateKind
         m_inputPins.push_back(inputPin);
     }
 
-    m_outputPin = new PinGraphicsItem(PinId{componentId, 0}, PinGraphicsItem::PinRole::GateOutput, controller, this);
+    m_outputPin = new PinGraphicsItem(PinId{componentId, gateOutputPinIndex(inputCount)}, PinGraphicsItem::PinRole::GateOutput,
+                                      controller, this);
     m_outputPin->setPos(bodyWidth + 8.0, bodyHeight / 2.0);
 
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
+    applySelectionStyle();
+}
+
+void GateGraphicsItem::applySelectionStyle()
+{
+    if (m_body == nullptr) {
+        return;
+    }
+
+    if (isSelected()) {
+        m_body->setPen(QPen(QColor(QStringLiteral("#f39c12")), 3.0));
+    } else {
+        m_body->setPen(QPen(Qt::black, 1.5));
+    }
 }
 
 QString GateGraphicsItem::gateLabel(const GateKind kind)
@@ -78,6 +94,27 @@ void GateGraphicsItem::clearSimulationHighlight()
             inputPin->setSignalValue(SignalValue::Unknown, false);
         }
     }
+}
+
+void GateGraphicsItem::updateWirePaths()
+{
+    if (m_controller != nullptr) {
+        m_controller->updateAllWirePaths();
+    }
+}
+
+QVariant GateGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemPositionHasChanged || change == ItemScenePositionHasChanged) {
+        updateWirePaths();
+        if (m_controller != nullptr) {
+            m_controller->updateGatePosition(m_componentId, pos());
+        }
+    }
+    if (change == ItemSelectedHasChanged) {
+        applySelectionStyle();
+    }
+    return QGraphicsItemGroup::itemChange(change, value);
 }
 
 } // namespace digitallogic::ui

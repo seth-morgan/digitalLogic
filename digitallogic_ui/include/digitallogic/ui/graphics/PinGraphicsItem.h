@@ -4,7 +4,7 @@
 #include "digitallogic/model/SignalValue.h"
 
 #include <QGraphicsEllipseItem>
-#include <QGraphicsSceneMouseEvent>
+#include <QPointF>
 
 namespace digitallogic::ui {
 
@@ -25,11 +25,10 @@ public:
 
     [[nodiscard]] PinId pinId() const noexcept { return m_pinId; }
     [[nodiscard]] PinRole role() const noexcept { return m_role; }
+    [[nodiscard]] QPointF sceneCenter() const;
 
     void setSignalValue(SignalValue value, bool simulated);
-
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void setPendingWire(bool pending);
 
 private:
     PinId m_pinId;

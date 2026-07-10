@@ -3,9 +3,17 @@
 #include "digitallogic/ui/SignalColors.h"
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
 
+#include <QPainter>
+#include <QPainterPathStroker>
 #include <QPen>
+#include <QStyleOptionGraphicsItem>
 
 namespace digitallogic::ui {
+
+namespace {
+constexpr qreal kWireWidth = 2.5;
+constexpr qreal kWireHitWidth = 10.0;
+}
 
 WireGraphicsItem::WireGraphicsItem(PinGraphicsItem* fromPin, PinGraphicsItem* toPin, QGraphicsItem* parent)
     : QGraphicsLineItem(parent)
@@ -14,9 +22,10 @@ WireGraphicsItem::WireGraphicsItem(PinGraphicsItem* fromPin, PinGraphicsItem* to
     , m_fromPinId(fromPin != nullptr ? fromPin->pinId() : PinId{})
     , m_toPinId(toPin != nullptr ? toPin->pinId() : PinId{})
 {
-    setPen(QPen(QColor(QStringLiteral("#808080")), 2.5));
     setZValue(1.0);
+    setFlag(QGraphicsItem::ItemIsSelectable, true);
     updatePath();
+    applySelectionStyle();
 }
 
 void WireGraphicsItem::updatePath()
@@ -25,19 +34,67 @@ void WireGraphicsItem::updatePath()
         return;
     }
 
-    const QPointF fromScene = m_fromPin->sceneBoundingRect().center();
-    const QPointF toScene = m_toPin->sceneBoundingRect().center();
+    const QPointF fromScene = m_fromPin->sceneCenter();
+    const QPointF toScene = m_toPin->sceneCenter();
+    prepareGeometryChange();
     setLine(QLineF(fromScene, toScene));
 }
 
 void WireGraphicsItem::setSignalValue(const SignalValue value, const bool simulated)
 {
-    setPen(QPen(signalColor(value, simulated), 2.5));
+    m_signalColor = signalColor(value, simulated);
+    m_simulated = simulated;
+    applySelectionStyle();
 }
 
 void WireGraphicsItem::clearSimulationHighlight()
 {
-    setPen(QPen(QColor(QStringLiteral("#808080")), 2.5));
+    m_signalColor = QColor(QStringLiteral("#808080"));
+    m_simulated = false;
+    applySelectionStyle();
+}
+
+bool WireGraphicsItem::containsScenePoint(const QPointF& scenePos) const
+{
+    return shape().contains(mapFromScene(scenePos));
+}
+
+void WireGraphicsItem::applySelectionStyle()
+{
+    QPen wirePen(m_signalColor, kWireWidth);
+    if (isSelected()) {
+        wirePen.setColor(QColor(QStringLiteral("#f39c12")));
+        wirePen.setWidth(kWireWidth + 1.5);
+    }
+    prepareGeometryChange();
+    setPen(wirePen);
+}
+
+void WireGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    QStyleOptionGraphicsItem styleOption(*option);
+    styleOption.state &= ~QStyle::State_Selected;
+    QGraphicsLineItem::paint(painter, &styleOption, widget);
+}
+
+QPainterPath WireGraphicsItem::shape() const
+{
+    QPainterPath path;
+    path.moveTo(line().p1());
+    path.lineTo(line().p2());
+
+    QPainterPathStroker stroker;
+    stroker.setWidth(kWireHitWidth);
+    stroker.setCapStyle(Qt::RoundCap);
+    return stroker.createStroke(path);
+}
+
+QVariant WireGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemSelectedHasChanged) {
+        applySelectionStyle();
+    }
+    return QGraphicsLineItem::itemChange(change, value);
 }
 
 } // namespace digitallogic::ui

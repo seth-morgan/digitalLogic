@@ -2,9 +2,9 @@
 
 ## Next launch (start here)
 
-**Active phase:** Phase 5 — Polish (future)
+**Active phase:** Phase 5c — More gates (future)
 
-Phases 0–4 are complete. See [Phase 5](#phase-5--polish-future) for next work.
+Phases 0–5b are complete. See [Phase 5c](#phase-5c--more-gates-future) for next work.
 
 ---
 
@@ -51,10 +51,26 @@ Phases 0–4 are complete. See [Phase 5](#phase-5--polish-future) for next work.
 - [x] Run propagates signals; connected components show green (1) or red (0)
 - [x] Reset clears wire/gate/output colors back to neutral
 
-## Phase 5 — Polish (future)
+## Phase 5 — Polish
 
-- [ ] Delete/move components, wire validation errors
-- [ ] JSON circuit save/load (core serializes without UI headers)
+### Phase 5a — Delete, selection, validation (complete)
+
+- [x] Select gates and wires (orange highlight)
+- [x] Delete selected items with Delete/Backspace or toolbar Delete button
+- [x] Removing a gate removes its attached wires
+- [x] Wire validation errors shown in status bar
+- [x] Gate position synced to core model when moved
+- [x] QTest coverage for validation and removal
+
+### Phase 5b — Persistence (complete)
+
+- [x] Clear button removes all gates and wires; resets sources to 0
+- [x] JSON circuit save/load via toolbar Save and Open
+- [x] `CircuitSerializer` in core (no UI headers)
+- [x] QTest round-trip and invalid wire rejection
+
+### Phase 5c — More gates (future)
+
 - [ ] Additional gates (NAND, XOR, etc.)
 
 ---

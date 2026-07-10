@@ -28,7 +28,8 @@ SourceGraphicsItem::SourceGraphicsItem(const ComponentId componentId, CircuitCon
     m_label->setFont(QFont(QStringLiteral("Arial"), 14, QFont::Bold));
     m_label->setPos(26.0, 16.0);
 
-    m_outputPin = new PinGraphicsItem(PinId{componentId, 0}, PinGraphicsItem::PinRole::SourceOutput, controller, this);
+    m_outputPin = new PinGraphicsItem(PinId{componentId, sourceOutputPinIndex()}, PinGraphicsItem::PinRole::SourceOutput,
+                                      controller, this);
     m_outputPin->setPos(78.0, 20.0);
 
     setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -59,10 +60,38 @@ void SourceGraphicsItem::clearSimulationHighlight()
 
 void SourceGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    if (m_controller != nullptr && m_controller->isWireDragInProgress()) {
+        event->ignore();
+        return;
+    }
+
+    if (m_outputPin != nullptr) {
+        const QPointF pinLocal = m_outputPin->mapFromScene(event->scenePos());
+        if (m_outputPin->contains(pinLocal)) {
+            event->ignore();
+            return;
+        }
+    }
+
     if (m_controller != nullptr) {
         m_controller->toggleSource(m_componentId);
     }
     QGraphicsItemGroup::mousePressEvent(event);
+}
+
+void SourceGraphicsItem::updateWirePaths()
+{
+    if (m_controller != nullptr) {
+        m_controller->updateAllWirePaths();
+    }
+}
+
+QVariant SourceGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemPositionHasChanged || change == ItemScenePositionHasChanged) {
+        updateWirePaths();
+    }
+    return QGraphicsItemGroup::itemChange(change, value);
 }
 
 } // namespace digitallogic::ui

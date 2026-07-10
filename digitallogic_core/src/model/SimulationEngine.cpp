@@ -1,5 +1,6 @@
 #include "digitallogic/model/SimulationEngine.h"
 
+#include "digitallogic/model/PinIndices.h"
 #include "digitallogic/gates/AndGate.h"
 #include "digitallogic/gates/NotGate.h"
 #include "digitallogic/gates/OrGate.h"
@@ -11,9 +12,14 @@ namespace digitallogic {
 
 namespace {
 
-[[nodiscard]] PinId outputPin(const ComponentId componentId)
+[[nodiscard]] PinId sourceOutputPin(const ComponentId componentId)
 {
-    return PinId{componentId, 0};
+    return PinId{componentId, sourceOutputPinIndex()};
+}
+
+[[nodiscard]] PinId gateOutputPin(const ComponentId componentId, const int inputCount)
+{
+    return PinId{componentId, gateOutputPinIndex(inputCount)};
 }
 
 [[nodiscard]] bool dependsOn(const Gate* gate, const Circuit& circuit, const QHash<ComponentId, QSet<ComponentId>>& adjacency, QSet<ComponentId>& visiting, QSet<ComponentId>& visited, QString& error)
@@ -141,7 +147,7 @@ std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit)
     QHash<PinId, SignalValue> resolved;
 
     for (const SourceNode& source : circuit.sources()) {
-        resolved.insert(outputPin(source.id()), source.value());
+        resolved.insert(sourceOutputPin(source.id()), source.value());
     }
 
     for (const ComponentId gateId : order.value()) {
@@ -166,7 +172,7 @@ std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit)
             inputs.push_back(inputValue);
         }
 
-        resolved.insert(outputPin(gateId), gate->evaluate(inputs));
+        resolved.insert(gateOutputPin(gateId, gate->inputCount()), gate->evaluate(inputs));
     }
 
     for (const Wire& wire : circuit.wires()) {

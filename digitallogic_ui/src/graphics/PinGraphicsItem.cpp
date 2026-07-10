@@ -4,13 +4,12 @@
 #include "digitallogic/ui/SignalColors.h"
 
 #include <QBrush>
-#include <QGraphicsSceneMouseEvent>
 #include <QPen>
 
 namespace digitallogic::ui {
 
 namespace {
-constexpr qreal kPinRadius = 6.0;
+constexpr qreal kPinRadius = 9.0;
 }
 
 PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, CircuitController* controller, QGraphicsItem* parent)
@@ -20,9 +19,15 @@ PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, CircuitC
     , m_controller(controller)
 {
     setBrush(QBrush(signalColor(SignalValue::Unknown, false)));
-    setPen(QPen(Qt::black, 1.0));
-    setZValue(2.0);
+    setPen(QPen(Qt::black, 1.5));
+    setZValue(10.0);
     setAcceptHoverEvents(true);
+    setAcceptedMouseButtons(Qt::NoButton);
+}
+
+QPointF PinGraphicsItem::sceneCenter() const
+{
+    return mapToScene(0.0, 0.0);
 }
 
 void PinGraphicsItem::setSignalValue(const SignalValue value, const bool simulated)
@@ -32,12 +37,13 @@ void PinGraphicsItem::setSignalValue(const SignalValue value, const bool simulat
     setBrush(QBrush(signalColor(value, simulated)));
 }
 
-void PinGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void PinGraphicsItem::setPendingWire(const bool pending)
 {
-    if (m_controller != nullptr) {
-        m_controller->handlePinClicked(m_pinId, m_role);
+    if (pending) {
+        setPen(QPen(QColor(QStringLiteral("#2980b9")), 3.0));
+    } else {
+        setPen(QPen(Qt::black, 1.5));
     }
-    QGraphicsEllipseItem::mousePressEvent(event);
 }
 
 } // namespace digitallogic::ui

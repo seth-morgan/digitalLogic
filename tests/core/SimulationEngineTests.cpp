@@ -1,4 +1,5 @@
 #include "digitallogic/model/Circuit.h"
+#include "digitallogic/model/PinIndices.h"
 #include "digitallogic/model/SimulationEngine.h"
 
 #include <QTest>
@@ -21,11 +22,11 @@ void SimulationEngineTests::simpleAndCircuit_propagatesSourceValues()
     const std::optional<ComponentId> andGateId = circuit.addGate(GateKind::And, QPointF(100.0, 0.0));
     QVERIFY(andGateId.has_value());
 
-    const PinId sourceAOut{sourceA, 0};
-    const PinId sourceBOut{sourceB, 0};
-    const PinId andInput0{andGateId.value(), 0};
-    const PinId andInput1{andGateId.value(), 1};
-    const PinId andOutput{andGateId.value(), 0};
+    const PinId sourceAOut{sourceA, sourceOutputPinIndex()};
+    const PinId sourceBOut{sourceB, sourceOutputPinIndex()};
+    const PinId andInput0{andGateId.value(), gateInputPinIndex(0)};
+    const PinId andInput1{andGateId.value(), gateInputPinIndex(1)};
+    const PinId andOutput{andGateId.value(), gateOutputPinIndex(2)};
 
     QVERIFY(circuit.addWire(sourceAOut, andInput0));
     QVERIFY(circuit.addWire(sourceBOut, andInput1));
@@ -50,9 +51,9 @@ void SimulationEngineTests::notGate_invertsConnectedSource()
     const std::optional<ComponentId> notGateId = circuit.addGate(GateKind::Not, QPointF(100.0, 0.0));
     QVERIFY(notGateId.has_value());
 
-    const PinId sourceOut{source, 0};
-    const PinId notInput{notGateId.value(), 0};
-    const PinId notOutput{notGateId.value(), 0};
+    const PinId sourceOut{source, sourceOutputPinIndex()};
+    const PinId notInput{notGateId.value(), gateInputPinIndex(0)};
+    const PinId notOutput{notGateId.value(), gateOutputPinIndex(1)};
 
     QVERIFY(circuit.addWire(sourceOut, notInput));
 

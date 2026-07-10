@@ -22,12 +22,22 @@ public:
     void updatePath();
     void setSignalValue(SignalValue value, bool simulated);
     void clearSimulationHighlight();
+    [[nodiscard]] bool containsScenePoint(const QPointF& scenePos) const;
+
+protected:
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    QPainterPath shape() const override;
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
 private:
+    void applySelectionStyle();
+
     PinGraphicsItem* m_fromPin{nullptr};
     PinGraphicsItem* m_toPin{nullptr};
     PinId m_fromPinId;
     PinId m_toPinId;
+    QColor m_signalColor{QColor(QStringLiteral("#808080"))};
+    bool m_simulated{false};
 };
 
 } // namespace digitallogic::ui
