@@ -8,17 +8,20 @@
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/GatePaletteWidget.h"
 #include "digitallogic/ui/SimulationController.h"
+#include "digitallogic/ui/WinCelebrationOverlay.h"
 
 namespace digitallogic::ui {
 
 ChallengeController::ChallengeController(CircuitController* circuitController, GatePaletteWidget* gatePalette,
                                          ChallengePanelWidget* challengePanel,
-                                         SimulationController* simulationController, QObject* parent)
+                                         SimulationController* simulationController, WinCelebrationOverlay* winOverlay,
+                                         QObject* parent)
     : QObject(parent)
     , m_circuitController(circuitController)
     , m_gatePalette(gatePalette)
     , m_challengePanel(challengePanel)
     , m_simulationController(simulationController)
+    , m_winOverlay(winOverlay)
 {
     if (m_circuitController != nullptr) {
         connect(m_circuitController, &CircuitController::gateBudgetChanged, this, &ChallengeController::refreshPaletteBudget);
@@ -123,6 +126,9 @@ void ChallengeController::checkSolution()
         m_levelSolved = true;
         if (m_challengePanel != nullptr) {
             m_challengePanel->setLevelSolved(true);
+        }
+        if (m_winOverlay != nullptr) {
+            m_winOverlay->play();
         }
     }
 }

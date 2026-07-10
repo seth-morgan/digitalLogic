@@ -6,7 +6,10 @@ add_library(digitallogic_ui STATIC
     include/digitallogic/ui/GatePaletteWidget.h
     include/digitallogic/ui/CircuitController.h
     include/digitallogic/ui/SimulationController.h
+    include/digitallogic/ui/AppTheme.h
     include/digitallogic/ui/ChallengeController.h
+    include/digitallogic/ui/WinCelebrationOverlay.h
+    src/AppTheme.cpp
     include/digitallogic/ui/ChallengePanelWidget.h
     include/digitallogic/ui/ChallengeDialog.h
     include/digitallogic/ui/graphics/TargetGraphicsItem.h
@@ -16,6 +19,7 @@ add_library(digitallogic_ui STATIC
     src/CircuitController.cpp
     src/SimulationController.cpp
     src/ChallengeController.cpp
+    src/WinCelebrationOverlay.cpp
     src/ChallengePanelWidget.cpp
     src/ChallengeDialog.cpp
     src/graphics/PinGraphicsItem.cpp

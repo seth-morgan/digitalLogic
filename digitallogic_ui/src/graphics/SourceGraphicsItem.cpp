@@ -1,5 +1,6 @@
 #include "digitallogic/ui/graphics/SourceGraphicsItem.h"
 
+#include "digitallogic/ui/AppTheme.h"
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/SignalColors.h"
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
@@ -17,16 +18,17 @@ SourceGraphicsItem::SourceGraphicsItem(const ComponentId componentId, CircuitCon
     , m_controller(controller)
 {
     m_body = new QGraphicsRectItem(0.0, 0.0, 70.0, 40.0, this);
-    m_body->setBrush(QBrush(QColor(QStringLiteral("#ecf0f1"))));
-    m_body->setPen(QPen(Qt::black, 1.5));
+    m_body->setBrush(QBrush(AppTheme::componentFill()));
+    m_body->setPen(QPen(AppTheme::componentBorder(), 1.5));
 
     auto* title = new QGraphicsTextItem(QStringLiteral("SRC"), this);
     title->setPos(8.0, 4.0);
-    title->setDefaultTextColor(Qt::black);
+    title->setDefaultTextColor(AppTheme::textMuted());
     m_title = title;
 
     m_label = new QGraphicsTextItem(QStringLiteral("0"), this);
     m_label->setFont(QFont(QStringLiteral("Arial"), 14, QFont::Bold));
+    m_label->setDefaultTextColor(AppTheme::textPrimary());
     m_label->setPos(26.0, 16.0);
 
     m_outputPin = new PinGraphicsItem(PinId{componentId, sourceOutputPinIndex()}, PinGraphicsItem::PinRole::SourceOutput,
@@ -66,7 +68,7 @@ void SourceGraphicsItem::setLocked(const bool locked)
 
 void SourceGraphicsItem::clearSimulationHighlight()
 {
-    m_body->setBrush(QBrush(QColor(QStringLiteral("#ecf0f1"))));
+    m_body->setBrush(QBrush(AppTheme::componentFill()));
     if (m_outputPin != nullptr) {
         m_outputPin->setSignalValue(SignalValue::Unknown, false);
     }

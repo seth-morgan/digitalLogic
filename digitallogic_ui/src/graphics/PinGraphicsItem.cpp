@@ -1,5 +1,6 @@
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
 
+#include "digitallogic/ui/AppTheme.h"
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/SignalColors.h"
 
@@ -18,8 +19,8 @@ PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, CircuitC
     , m_role(role)
     , m_controller(controller)
 {
-    setBrush(QBrush(signalColor(SignalValue::Unknown, false)));
-    setPen(QPen(Qt::black, 1.5));
+    setBrush(QBrush(AppTheme::componentFill()));
+    setPen(QPen(AppTheme::componentBorder(), 1.5));
     setZValue(10.0);
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::NoButton);
@@ -40,9 +41,9 @@ void PinGraphicsItem::setSignalValue(const SignalValue value, const bool simulat
 void PinGraphicsItem::setPendingWire(const bool pending)
 {
     if (pending) {
-        setPen(QPen(QColor(QStringLiteral("#2980b9")), 3.0));
+        setPen(QPen(AppTheme::selection(), 3.0));
     } else {
-        setPen(QPen(Qt::black, 1.5));
+        setPen(QPen(AppTheme::componentBorder(), 1.5));
     }
 }
 

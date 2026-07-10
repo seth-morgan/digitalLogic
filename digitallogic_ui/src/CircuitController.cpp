@@ -3,6 +3,7 @@
 #include "digitallogic/model/PinIndices.h"
 #include "digitallogic/model/CircuitSerializer.h"
 #include "digitallogic/model/WireValidation.h"
+#include "digitallogic/ui/AppTheme.h"
 #include "digitallogic/ui/SandboxView.h"
 #include "digitallogic/ui/graphics/GateGraphicsItem.h"
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
@@ -140,7 +141,7 @@ void CircuitController::beginWireDrag(PinGraphicsItem* fromPin, const QPointF& s
     m_wireDragFromPin->setPendingWire(true);
 
     m_wirePreviewLine = new QGraphicsLineItem();
-    m_wirePreviewLine->setPen(QPen(QColor(QStringLiteral("#2980b9")), 2.5, Qt::DashLine));
+    m_wirePreviewLine->setPen(QPen(AppTheme::gateAccent(GateKind::And), 2.5, Qt::DashLine));
     m_wirePreviewLine->setZValue(5.0);
     m_view->scene()->addItem(m_wirePreviewLine);
     updatePreviewLine(scenePos);

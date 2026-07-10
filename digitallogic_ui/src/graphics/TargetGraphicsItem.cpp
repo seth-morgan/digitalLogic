@@ -1,5 +1,6 @@
 #include "digitallogic/ui/graphics/TargetGraphicsItem.h"
 
+#include "digitallogic/ui/AppTheme.h"
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/SignalColors.h"
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
@@ -16,15 +17,16 @@ TargetGraphicsItem::TargetGraphicsItem(const ComponentId componentId, CircuitCon
     , m_controller(controller)
 {
     m_body = new QGraphicsRectItem(0.0, 0.0, 90.0, 50.0, this);
-    m_body->setBrush(QBrush(QColor(QStringLiteral("#fef9e7"))));
-    m_body->setPen(QPen(QColor(QStringLiteral("#f39c12")), 2.0));
+    m_body->setBrush(QBrush(AppTheme::componentFill()));
+    m_body->setPen(QPen(AppTheme::targetAccent(), 2.0));
 
     auto* title = new QGraphicsTextItem(QStringLiteral("OUT"), this);
     title->setPos(10.0, 4.0);
-    title->setDefaultTextColor(Qt::black);
+    title->setDefaultTextColor(AppTheme::targetAccent());
 
     m_valueLabel = new QGraphicsTextItem(QStringLiteral("-"), this);
     m_valueLabel->setFont(QFont(QStringLiteral("Arial"), 14, QFont::Bold));
+    m_valueLabel->setDefaultTextColor(AppTheme::textPrimary());
     m_valueLabel->setPos(34.0, 20.0);
 
     m_inputPin = new PinGraphicsItem(PinId{componentId, targetInputPinIndex()}, PinGraphicsItem::PinRole::TargetInput,
@@ -46,7 +48,7 @@ void TargetGraphicsItem::setInputSignal(const SignalValue value, const bool simu
 
 void TargetGraphicsItem::clearSimulationHighlight()
 {
-    m_body->setBrush(QBrush(QColor(QStringLiteral("#fef9e7"))));
+    m_body->setBrush(QBrush(AppTheme::componentFill()));
     m_valueLabel->setPlainText(QStringLiteral("-"));
     if (m_inputPin != nullptr) {
         m_inputPin->setSignalValue(SignalValue::Unknown, false);

@@ -13,6 +13,7 @@ class SandboxView;
 class SimulationController;
 class ChallengePanelWidget;
 class ChallengeController;
+class WinCelebrationOverlay;
 
 /**
  * @brief Top-level window with toolbar, sandbox, and gate palette.
@@ -31,12 +32,14 @@ private:
     void openChallengeMode();
     void showStatusMessage(const QString& message);
     void setSandboxActionsEnabled(bool enabled);
+    void resizeEvent(QResizeEvent* event) override;
 
     SandboxView* m_sandboxView{nullptr};
     GatePaletteWidget* m_gatePalette{nullptr};
     ChallengePanelWidget* m_challengePanel{nullptr};
     SimulationController* m_simulationController{nullptr};
     ChallengeController* m_challengeController{nullptr};
+    WinCelebrationOverlay* m_winOverlay{nullptr};
     QLabel* m_statusLabel{nullptr};
     QAction* m_saveAction{nullptr};
     QAction* m_openAction{nullptr};

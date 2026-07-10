@@ -2,9 +2,9 @@
 
 ## Next launch (start here)
 
-**Active phase:** Phase 7 — Live simulation (complete)
+**Active phase:** UI polish complete — see readme for next ideas
 
-Phases 0–6 and Phase 5c are complete.
+Phases 0–7 are complete.
 
 ---
 
@@ -88,6 +88,13 @@ Phases 0–6 and Phase 5c are complete.
 ## Phase 7 — Live simulation (complete)
 
 - [x] Toggling source inputs re-runs simulation and updates wire/gate colors immediately
+
+## Phase 8 — Dark UI and animations (complete)
+
+- [x] Dark theme across window, sandbox, palette, and challenge panel
+- [x] Colorful 3D-style gate palette buttons
+- [x] Animated pipeline flow on simulated wires
+- [x] Win celebration overlay on level completion
 
 ---
 

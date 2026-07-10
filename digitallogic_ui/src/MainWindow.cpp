@@ -1,15 +1,18 @@
 #include "digitallogic/ui/MainWindow.h"
 
+#include "digitallogic/ui/AppTheme.h"
 #include "digitallogic/ui/ChallengeController.h"
 #include "digitallogic/ui/ChallengePanelWidget.h"
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/GatePaletteWidget.h"
 #include "digitallogic/ui/SandboxView.h"
 #include "digitallogic/ui/SimulationController.h"
+#include "digitallogic/ui/WinCelebrationOverlay.h"
 
 #include <QAction>
 #include <QFileDialog>
 #include <QLabel>
+#include <QResizeEvent>
 #include <QStatusBar>
 #include <QToolBar>
 #include <QVBoxLayout>
@@ -42,9 +45,12 @@ void MainWindow::setupUi()
     layout->addWidget(m_gatePalette, 1);
     setCentralWidget(central);
 
+    m_winOverlay = new WinCelebrationOverlay(central);
+    m_winOverlay->hide();
+
     m_simulationController = new SimulationController(m_sandboxView->circuitController(), this);
     m_challengeController = new ChallengeController(m_sandboxView->circuitController(), m_gatePalette, m_challengePanel,
-                                                    m_simulationController, this);
+                                                    m_simulationController, m_winOverlay, this);
     m_statusLabel = new QLabel(QStringLiteral("Drag from an output pin to a gate input. Select items and press Delete to remove."));
     m_statusLabel->setContentsMargins(8, 0, 8, 0);
     statusBar()->addWidget(m_statusLabel, 1);
@@ -61,6 +67,7 @@ void MainWindow::setupToolbar()
 {
     auto* toolbar = addToolBar(QStringLiteral("Simulation"));
     toolbar->setMovable(false);
+    toolbar->setStyleSheet(AppTheme::toolbarButtonStylesheet());
 
     auto* runAction = toolbar->addAction(QStringLiteral("Run"));
     auto* resetAction = toolbar->addAction(QStringLiteral("Reset"));
@@ -120,6 +127,14 @@ void MainWindow::setSandboxActionsEnabled(const bool enabled)
     }
     if (m_openAction != nullptr) {
         m_openAction->setEnabled(sandboxEnabled);
+    }
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+    QMainWindow::resizeEvent(event);
+    if (m_winOverlay != nullptr && centralWidget() != nullptr) {
+        m_winOverlay->setGeometry(centralWidget()->rect());
     }
 }
 

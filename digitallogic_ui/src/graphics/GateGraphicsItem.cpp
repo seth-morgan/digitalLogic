@@ -1,5 +1,6 @@
 #include "digitallogic/ui/graphics/GateGraphicsItem.h"
 
+#include "digitallogic/ui/AppTheme.h"
 #include "digitallogic/model/PinIndices.h"
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/SignalColors.h"
@@ -23,12 +24,12 @@ GateGraphicsItem::GateGraphicsItem(const ComponentId componentId, const GateKind
     const double bodyHeight = 50.0;
 
     m_body = new QGraphicsRectItem(0.0, 0.0, bodyWidth, bodyHeight, this);
-    m_body->setBrush(QBrush(QColor(QStringLiteral("#ecf0f1"))));
-    m_body->setPen(QPen(Qt::black, 1.5));
+    m_body->setBrush(QBrush(AppTheme::componentFill()));
+    m_body->setPen(QPen(AppTheme::componentBorder(), 1.5));
 
     auto* label = new QGraphicsTextItem(gateLabel(kind), this);
     label->setFont(QFont(QStringLiteral("Arial"), 12, QFont::Bold));
-    label->setDefaultTextColor(Qt::black);
+    label->setDefaultTextColor(AppTheme::textPrimary());
     label->setPos(18.0, 16.0);
 
     const double inputSpacing = bodyHeight / static_cast<double>(inputCount + 1);
@@ -55,9 +56,9 @@ void GateGraphicsItem::applySelectionStyle()
     }
 
     if (isSelected()) {
-        m_body->setPen(QPen(QColor(QStringLiteral("#f39c12")), 3.0));
+        m_body->setPen(QPen(AppTheme::selection(), 3.0));
     } else {
-        m_body->setPen(QPen(Qt::black, 1.5));
+        m_body->setPen(QPen(AppTheme::componentBorder(), 1.5));
     }
 }
 
@@ -89,7 +90,7 @@ void GateGraphicsItem::setOutputSignal(const SignalValue value, const bool simul
 
 void GateGraphicsItem::clearSimulationHighlight()
 {
-    m_body->setBrush(QBrush(QColor(QStringLiteral("#ecf0f1"))));
+    m_body->setBrush(QBrush(AppTheme::componentFill()));
     if (m_outputPin != nullptr) {
         m_outputPin->setSignalValue(SignalValue::Unknown, false);
     }

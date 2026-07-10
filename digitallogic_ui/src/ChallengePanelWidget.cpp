@@ -1,5 +1,8 @@
 #include "digitallogic/ui/ChallengePanelWidget.h"
 
+#include "digitallogic/model/Gate.h"
+#include "digitallogic/ui/AppTheme.h"
+
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
@@ -10,15 +13,18 @@ namespace digitallogic::ui {
 ChallengePanelWidget::ChallengePanelWidget(QWidget* parent)
     : QWidget(parent)
 {
+    setStyleSheet(QStringLiteral("background-color: #262c38; border-bottom: 1px solid #2a3140;"));
+
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(12, 8, 12, 8);
     layout->setSpacing(12);
 
     auto* textColumn = new QVBoxLayout();
     m_titleLabel = new QLabel(this);
-    m_titleLabel->setStyleSheet(QStringLiteral("font-weight: bold; font-size: 14px;"));
+    m_titleLabel->setStyleSheet(QStringLiteral("font-weight: bold; font-size: 15px; color: #eef1f6;"));
     m_descriptionLabel = new QLabel(this);
     m_descriptionLabel->setWordWrap(true);
+    m_descriptionLabel->setStyleSheet(QStringLiteral("color: #9aa3b2; font-size: 13px;"));
     textColumn->addWidget(m_titleLabel);
     textColumn->addWidget(m_descriptionLabel);
     layout->addLayout(textColumn, 1);
@@ -26,6 +32,9 @@ ChallengePanelWidget::ChallengePanelWidget(QWidget* parent)
     m_checkButton = new QPushButton(QStringLiteral("Check Solution"), this);
     m_nextLevelButton = new QPushButton(QStringLiteral("Next Level"), this);
     m_exitButton = new QPushButton(QStringLiteral("Exit Challenge"), this);
+    m_checkButton->setStyleSheet(AppTheme::primaryActionStylesheet());
+    m_nextLevelButton->setStyleSheet(AppTheme::gateButtonStylesheet(GateKind::Xor));
+    m_exitButton->setStyleSheet(AppTheme::toolbarButtonStylesheet());
     m_nextLevelButton->setVisible(false);
     m_nextLevelButton->setEnabled(false);
 

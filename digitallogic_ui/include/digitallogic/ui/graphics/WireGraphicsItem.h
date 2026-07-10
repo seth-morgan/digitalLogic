@@ -3,6 +3,7 @@
 #include "digitallogic/model/PinId.h"
 #include "digitallogic/model/SignalValue.h"
 
+#include <QColor>
 #include <QGraphicsLineItem>
 
 namespace digitallogic::ui {
@@ -28,6 +29,7 @@ protected:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     QPainterPath shape() const override;
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+    void advance(int phase) override;
 
 private:
     void applySelectionStyle();
@@ -36,8 +38,10 @@ private:
     PinGraphicsItem* m_toPin{nullptr};
     PinId m_fromPinId;
     PinId m_toPinId;
-    QColor m_signalColor{QColor(QStringLiteral("#808080"))};
+    QColor m_signalColor;
+    SignalValue m_signalValue{SignalValue::Unknown};
     bool m_simulated{false};
+    qreal m_flowPhase{0.0};
 };
 
 } // namespace digitallogic::ui

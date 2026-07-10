@@ -1,6 +1,7 @@
 #include "digitallogic/ui/SandboxView.h"
 
 #include "digitallogic/model/Gate.h"
+#include "digitallogic/ui/AppTheme.h"
 #include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
 
@@ -10,6 +11,7 @@
 #include <QKeyEvent>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QTimer>
 #include <cmath>
 #include <QPainter>
 
@@ -30,6 +32,12 @@ SandboxView::SandboxView(QWidget* parent)
     setAcceptDrops(true);
     setDragMode(QGraphicsView::NoDrag);
     setFocusPolicy(Qt::StrongFocus);
+    setFrameShape(QFrame::NoFrame);
+    setBackgroundBrush(AppTheme::background());
+
+    auto* animationTimer = new QTimer(this);
+    connect(animationTimer, &QTimer::timeout, scene, &QGraphicsScene::advance);
+    animationTimer->start(33);
 
     m_circuitController = new CircuitController(this, this);
     m_circuitController->initializeDefaultSources();
@@ -130,9 +138,9 @@ void SandboxView::dropEvent(QDropEvent* event)
 
 void SandboxView::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    painter->fillRect(rect, QColor(QStringLiteral("#fafafa")));
+    painter->fillRect(rect, AppTheme::background());
 
-    QPen gridPen(QColor(QStringLiteral("#e0e0e0")));
+    QPen gridPen(AppTheme::gridLine());
     gridPen.setWidth(1);
     painter->setPen(gridPen);
 

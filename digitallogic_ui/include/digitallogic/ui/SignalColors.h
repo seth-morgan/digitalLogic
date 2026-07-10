@@ -1,6 +1,7 @@
 #pragma once
 
 #include "digitallogic/model/SignalValue.h"
+#include "digitallogic/ui/AppTheme.h"
 
 #include <QColor>
 
@@ -12,11 +13,10 @@ namespace digitallogic::ui {
 [[nodiscard]] inline QColor signalColor(const SignalValue value, const bool simulated)
 {
     if (!simulated || value == SignalValue::Unknown) {
-        return QColor(QStringLiteral("#808080"));
+        return AppTheme::wireIdle();
     }
 
-    return (value == SignalValue::True) ? QColor(QStringLiteral("#2ecc71"))
-                                        : QColor(QStringLiteral("#e74c3c"));
+    return (value == SignalValue::True) ? AppTheme::signalTrue() : AppTheme::signalFalse();
 }
 
 } // namespace digitallogic::ui

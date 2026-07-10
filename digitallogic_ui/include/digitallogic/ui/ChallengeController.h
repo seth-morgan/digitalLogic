@@ -13,6 +13,7 @@ class ChallengePanelWidget;
 class CircuitController;
 class GatePaletteWidget;
 class SimulationController;
+class WinCelebrationOverlay;
 
 /**
  * @brief Orchestrates challenge mode flow, validation, and level progression.
@@ -23,7 +24,7 @@ class ChallengeController final : public QObject {
 public:
     ChallengeController(CircuitController* circuitController, GatePaletteWidget* gatePalette,
                         ChallengePanelWidget* challengePanel, SimulationController* simulationController,
-                        QObject* parent = nullptr);
+                        WinCelebrationOverlay* winOverlay, QObject* parent = nullptr);
 
     void openLevelPicker();
     [[nodiscard]] bool isActive() const noexcept { return m_currentLevelIndex.has_value(); }
@@ -46,6 +47,7 @@ private:
     GatePaletteWidget* m_gatePalette{nullptr};
     ChallengePanelWidget* m_challengePanel{nullptr};
     SimulationController* m_simulationController{nullptr};
+    WinCelebrationOverlay* m_winOverlay{nullptr};
     std::optional<int> m_currentLevelIndex;
     bool m_levelSolved{false};
 };

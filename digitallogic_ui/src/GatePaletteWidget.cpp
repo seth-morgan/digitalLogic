@@ -1,5 +1,7 @@
 #include "digitallogic/ui/GatePaletteWidget.h"
 
+#include "digitallogic/ui/AppTheme.h"
+
 #include <QDrag>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -21,6 +23,7 @@ GatePaletteWidget::GatePaletteWidget(QWidget* parent)
     layout->setSpacing(12);
 
     auto* title = new QLabel(QStringLiteral("Gates:"), this);
+    title->setStyleSheet(QStringLiteral("color: #9aa3b2; font-weight: 600;"));
     layout->addWidget(title);
 
     m_gateButtons = {
@@ -32,13 +35,15 @@ GatePaletteWidget::GatePaletteWidget(QWidget* parent)
     };
 
     for (GateButtonEntry& entry : m_gateButtons) {
-        entry.button->setMinimumSize(80, 36);
+        entry.button->setMinimumSize(88, 42);
+        entry.button->setStyleSheet(AppTheme::gateButtonStylesheet(entry.kind));
         layout->addWidget(entry.button);
         entry.button->installEventFilter(this);
     }
 
     layout->addStretch(1);
-    setMinimumHeight(64);
+    setMinimumHeight(72);
+    setStyleSheet(QStringLiteral("background-color: #1c212b; border-top: 1px solid #2a3140;"));
 }
 
 void GatePaletteWidget::setChallengeMode(const bool enabled)
