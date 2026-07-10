@@ -18,6 +18,7 @@ void SimulationController::runSimulation()
 
     const std::optional<QVector<PinSignal>> results = SimulationEngine::run(m_circuitController->circuit());
     if (!results.has_value()) {
+        emit statusMessage(QStringLiteral("Cannot simulate: cycle detected in the circuit."));
         return;
     }
 

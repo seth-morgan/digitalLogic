@@ -1,26 +1,51 @@
 # Digital Logic Simulator
 
-Interactive Qt 6 digital logic sandbox. Drag AND, OR, and NOT gates from a bottom palette onto the canvas, wire them to pre-placed input sources, and press **Run** to propagate signals. **Green = true (1)**, **red = false (0)**.
+Interactive Qt 6 digital logic sandbox and puzzle game. Build circuits by dragging gates onto the canvas, wire pins together, and watch signals propagate in real time. **Challenge mode** includes seven levels from basic AND/OR through building logic using NAND gates only.
+
+**Green = true (1)** · **Red = false (0)**
+
+## Features
+
+- **Sandbox mode** — free-form circuit building with save/load (JSON)
+- **Five gate types** — AND, OR, NOT, NAND, XOR
+- **Live simulation** — toggle source inputs and see wires animate immediately
+- **Challenge mode** — seven levels with fixed inputs, gate budgets, and truth-table validation
+- **Dark UI** — animated signal flow on wires and a celebration overlay when you beat a level
 
 ## UI layout
 
 ```
-┌─────────────────────────────────────────────┐
-│  Toolbar:  [ Run ]  [ Reset ]               │
-├─────────────────────────────────────────────┤
-│                                             │
-│           Sandbox (QGraphicsView)           │
-│     Pre-placed sources, gates, wires        │
-│              (~80% height)                  │
-│                                             │
-├─────────────────────────────────────────────┤
-│  Gate palette:  [ AND ]  [ OR ]  [ NOT ]    │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│  Toolbar:  Run | Reset | Clear | Delete | Challenge | …  │
+├──────────────────────────────────────────────────────────┤
+│  Challenge panel (visible in challenge mode)             │
+├──────────────────────────────────────────────────────────┤
+│                                                          │
+│              Sandbox (QGraphicsView)                     │
+│        Sources, gates, wires, output target              │
+│                                                          │
+├──────────────────────────────────────────────────────────┤
+│  Gate palette:  AND  OR  NOT  NAND  XOR                 │
+└──────────────────────────────────────────────────────────┘
 ```
 
-- **Sandbox (top ~80%):** `QGraphicsView` / `QGraphicsScene` with pre-placed **Source** nodes (click to toggle 0/1), placed gates, and wires between pins.
-- **Palette (bottom):** draggable AND, OR, NOT gate templates.
-- **Toolbar:** **Run** evaluates the circuit; **Reset** clears propagated signal colors.
+### Sandbox controls
+
+| Action | How |
+|--------|-----|
+| Toggle input | Click a source node |
+| Place gate | Drag from the palette |
+| Wire | Click an output pin, then click an input pin |
+| Delete | Select item(s), press Delete or toolbar **Delete** |
+| Simulate | **Run**, or toggle a source (live update) |
+| Save / load | Toolbar **Save** / **Open** (JSON) |
+
+### Challenge mode
+
+1. Click **Challenge** and pick a level.
+2. Wire the fixed sources to the **OUT** target using only the allowed gates.
+3. Click **Check Solution** — all input combinations must match.
+4. **Next Level** unlocks on success.
 
 ## Architecture (MVC)
 
@@ -34,50 +59,28 @@ app                 Executable entry point (links UI only)
 
 | Type | Role |
 |------|------|
-| `SignalValue` | Boolean signal wrapper (true/false) |
-| `Gate` | Abstract base for logic gates |
-| `AndGate`, `OrGate`, `NotGate` | Concrete gate implementations |
-| `SourceNode` | Fixed input source in the sandbox |
-| `Wire` | Connection from an output pin to an input pin |
-| `Circuit` | Owns components and topology |
-| `SimulationEngine` | Topologically evaluates the circuit on Run |
+| `SignalValue` | Boolean signal wrapper |
+| `Gate` | Abstract logic gate |
+| `AndGate`, `OrGate`, `NotGate`, `NandGate`, `XorGate` | Concrete gates |
+| `SourceNode`, `TargetNode` | Input sources and challenge output targets |
+| `Wire`, `Circuit` | Topology and component ownership |
+| `SimulationEngine` | Topological evaluation |
+| `CircuitSerializer` | JSON save/load |
+| `ChallengeCatalog`, `ChallengeValidator` | Built-in puzzles and validation |
 
-### View (`digitallogic_ui`)
+### View / controller (`digitallogic_ui`)
 
-- `MainWindow` — layout shell with toolbar, sandbox, and palette
-- `SandboxView` — `QGraphicsView` hosting the circuit canvas
-- `GatePaletteWidget` — bottom bar with draggable gate templates
-- Graphics items — visual representation of sources, gates, wires, and pins
-
-### Controller
-
-- `CircuitController` — syncs drag/drop, wiring, and component placement between view and model
-- `SimulationController` — triggers Run/Reset, reads model results, refreshes view colors
+- `MainWindow`, `SandboxView`, `GatePaletteWidget` — layout and canvas
+- `CircuitController`, `SimulationController`, `ChallengeController` — model sync and flow
+- Graphics items — sources, gates, wires, pins, targets
 
 Dependencies point inward: **UI → controllers → core**. Core never imports UI headers.
-
-## Signal propagation (Run)
-
-1. Read all `SourceNode` values from the model (user toggles).
-2. Topologically order gates from sources.
-3. Propagate `SignalValue` along wires.
-4. Push results to graphics items — green/red on pins, wires, and gate outputs.
-
-## Coding rules
-
-Full guardrails live in [`cursorrules.md`](cursorrules.md). Summary:
-
-- **MVC split** — core has zero UI dependencies; models serializable without widget headers.
-- **C++20 + Qt 6** — `unique_ptr`, `[[nodiscard]]`, explicit signals/slots, `QStringLiteral` for fixed strings.
-- **Clean code** — single responsibility, domain names (`SimulationEngine`, `AndGate`), minimal scope, fail clearly.
-- **Documentation** — Doxygen/Javadoc-style `@brief`, `@param`, `@return` on all public APIs under `include/digitallogic/`.
-- **Testing** — QTest for gate logic and simulation; manual verification for drag/wire/Run UX.
 
 ## Build prerequisites
 
 - CMake 3.16+
-- Qt 6 (Widgets, Test)
-- C++20 compiler (MSVC on Windows)
+- Qt 6.2+ (Widgets, Test)
+- C++20 compiler (GCC, Clang, or MSVC)
 
 ## Build and run
 
@@ -85,29 +88,53 @@ Full guardrails live in [`cursorrules.md`](cursorrules.md). Summary:
 cmake -S . -B build -DCMAKE_PREFIX_PATH=<path-to-qt>
 cmake --build build
 ctest --test-dir build --output-on-failure
-./build/app/DigitalLogicSim    # or build\app\Debug\DigitalLogicSim.exe on Windows
 ```
 
-## Directory layout
+**Windows (MinGW/Qt):**
+
+```powershell
+$env:CMAKE_PREFIX_PATH = "C:\Qt\6.x.x\mingw_64"
+cmake -S . -B build
+cmake --build build
+.\build\app\DigitalLogicSim.exe
+```
+
+**Linux / macOS:**
+
+```bash
+./build/app/DigitalLogicSim
+```
+
+## Tests
+
+Five QTest executables cover gates, circuits, serialization, simulation, and challenge validation:
+
+```bash
+ctest --test-dir build --output-on-failure
+```
+
+## Project layout
 
 ```
 digitalLogic/
+├── LICENSE
 ├── CMakeLists.txt
-├── cursorrules.md
 ├── readme.md
 ├── tasks.md
-├── digitallogic_core/
-│   ├── CMakeLists.txt
-│   ├── include/digitallogic/
-│   │   ├── model/          # Circuit, Gate, Wire, SourceNode, SimulationEngine
-│   │   └── gates/          # AndGate, OrGate, NotGate
-│   └── src/
-├── digitallogic_ui/
-│   ├── CMakeLists.txt
-│   ├── include/digitallogic/ui/
-│   └── src/                # MainWindow, SandboxView, GatePalette, controllers, graphics items
-├── app/
-│   └── main.cpp
-└── tests/
-    └── core/               # QTest: gate logic + SimulationEngine
+├── cursorrules.md
+├── digitallogic_core/       # Model + simulation (no UI)
+├── digitallogic_ui/         # Qt widgets + graphics
+├── app/                     # main.cpp → DigitalLogicSim
+└── tests/core/              # QTest suites
 ```
+
+## Contributing
+
+1. Follow the MVC split in [`cursorrules.md`](cursorrules.md).
+2. Keep `digitallogic_core` free of Qt Widgets / QGraphics headers.
+3. Add or update QTest coverage for core behavior changes.
+4. Ensure `cmake --build build` and `ctest` pass before opening a PR.
+
+## License
+
+[MIT License](LICENSE) — Copyright (c) 2026 Seth Morgan

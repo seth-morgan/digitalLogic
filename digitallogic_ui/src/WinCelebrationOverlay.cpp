@@ -15,7 +15,7 @@ namespace digitallogic::ui {
 WinCelebrationOverlay::WinCelebrationOverlay(QWidget* parent)
     : QWidget(parent)
 {
-    setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
     setVisible(false);
     setAutoFillBackground(false);
 
@@ -23,6 +23,7 @@ WinCelebrationOverlay::WinCelebrationOverlay(QWidget* parent)
     layout->setAlignment(Qt::AlignCenter);
 
     m_banner = new QLabel(QStringLiteral("LEVEL COMPLETE!"), this);
+    m_banner->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     m_banner->setAlignment(Qt::AlignCenter);
     m_banner->setStyleSheet(QStringLiteral(
         "font-size: 42px; font-weight: 900; letter-spacing: 2px;"
@@ -40,40 +41,25 @@ void WinCelebrationOverlay::play()
     setVisible(true);
     m_active = true;
     m_flashStrength = 1.0;
-
-    if (m_fadeAnimation != nullptr) {
-        m_fadeAnimation->stop();
-        m_fadeAnimation->deleteLater();
-    }
-    if (m_scaleAnimation != nullptr) {
-        m_scaleAnimation->stop();
-        m_scaleAnimation->deleteLater();
-    }
-
     m_opacityEffect->setOpacity(0.0);
-    m_banner->setStyleSheet(QStringLiteral(
-        "font-size: 42px; font-weight: 900; letter-spacing: 2px;"
-        "color: #fef08a; background: transparent;"));
 
-    m_fadeAnimation = new QPropertyAnimation(m_opacityEffect, "opacity", this);
-    m_fadeAnimation->setDuration(450);
-    m_fadeAnimation->setStartValue(0.0);
-    m_fadeAnimation->setEndValue(1.0);
-    m_fadeAnimation->setEasingCurve(QEasingCurve::OutBack);
-    m_fadeAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    auto* fadeIn = new QPropertyAnimation(m_opacityEffect, "opacity", this);
+    fadeIn->setDuration(450);
+    fadeIn->setStartValue(0.0);
+    fadeIn->setEndValue(1.0);
+    fadeIn->setEasingCurve(QEasingCurve::OutBack);
+    fadeIn->start(QAbstractAnimation::DeleteWhenStopped);
 
     QTimer::singleShot(1600, this, [this]() {
-        if (m_fadeAnimation != nullptr) {
-            auto* fadeOut = new QPropertyAnimation(m_opacityEffect, "opacity", this);
-            fadeOut->setDuration(500);
-            fadeOut->setStartValue(1.0);
-            fadeOut->setEndValue(0.0);
-            connect(fadeOut, &QPropertyAnimation::finished, this, &WinCelebrationOverlay::finishCelebration);
-            fadeOut->start(QAbstractAnimation::DeleteWhenStopped);
-        }
+        auto* fadeOut = new QPropertyAnimation(m_opacityEffect, "opacity", this);
+        fadeOut->setDuration(500);
+        fadeOut->setStartValue(m_opacityEffect->opacity());
+        fadeOut->setEndValue(0.0);
+        connect(fadeOut, &QPropertyAnimation::finished, this, &WinCelebrationOverlay::finishCelebration);
+        fadeOut->start(QAbstractAnimation::DeleteWhenStopped);
     });
 
-    QTimer* flashTimer = new QTimer(this);
+    auto* flashTimer = new QTimer(this);
     connect(flashTimer, &QTimer::timeout, this, [this, flashTimer]() {
         m_flashStrength = qMax(0.0, m_flashStrength - 0.08);
         update();

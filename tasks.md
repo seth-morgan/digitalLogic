@@ -2,9 +2,9 @@
 
 ## Next launch (start here)
 
-**Active phase:** UI polish complete — see readme for next ideas
+**Status:** v0.1.0 — public release ready
 
-Phases 0–7 are complete.
+All planned phases (0–8) are complete. See [Future ideas](#future-ideas) for optional follow-ups.
 
 ---
 
@@ -79,7 +79,7 @@ Phases 0–7 are complete.
 ## Phase 6 — Challenge mode (complete)
 
 - [x] Toolbar **Challenge** opens level picker dialog
-- [x] Two simple levels: Level 1 (AND), Level 2 (OR)
+- [x] Seven levels with increasing difficulty
 - [x] Fixed sources (A, B), output target (OUT), and limited gate budget per level
 - [x] **Check Solution** validates all input combinations; **Next Level** unlocks on success
 - [x] `ChallengeValidator`, `ChallengeCatalog`, and `TargetNode` in core
@@ -96,6 +96,21 @@ Phases 0–7 are complete.
 - [x] Animated pipeline flow on simulated wires
 - [x] Win celebration overlay on level completion
 
+## Phase 9 — Public release (complete)
+
+- [x] MIT [`LICENSE`](LICENSE)
+- [x] Public-facing [`readme.md`](readme.md) (features, build, test, contributing)
+- [x] Expanded [`.gitignore`](.gitignore) for Qt/C++ artifacts
+- [x] Simulation cycle errors surfaced in status bar
+- [x] Win overlay no longer blocks mouse input during celebration
+
 ---
+
+## Future ideas
+
+- Additional gates (NOR, XNOR, flip-flops)
+- More challenge levels and difficulty tiers
+- Undo/redo for canvas edits
+- CI workflow (GitHub Actions) for build + test
 
 Each phase follows [`cursorrules.md`](cursorrules.md) **definition of done**: build, test, verify, update checkboxes, commit + push.

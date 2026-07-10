@@ -4,7 +4,6 @@
 
 class QGraphicsOpacityEffect;
 class QLabel;
-class QPropertyAnimation;
 
 namespace digitallogic::ui {
 
@@ -28,8 +27,6 @@ private:
 
     QLabel* m_banner{nullptr};
     QGraphicsOpacityEffect* m_opacityEffect{nullptr};
-    QPropertyAnimation* m_fadeAnimation{nullptr};
-    QPropertyAnimation* m_scaleAnimation{nullptr};
     qreal m_flashStrength{0.0};
     bool m_active{false};
 };

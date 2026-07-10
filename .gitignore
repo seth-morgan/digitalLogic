@@ -1,6 +1,37 @@
+# Build
 build/
+out/
+cmake-build-*/
+
+# CMake / Qt Creator
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+compile_commands.json
+
+# Qt
 *.user
 *.autosave
-CMakeLists.txt.user
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+# IDE
 .vs/
+.vscode/
 .idea/
+*.swp
+*~
+
+# Compiled objects
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# OS
+.DS_Store
+Thumbs.db

@@ -58,6 +58,7 @@ void MainWindow::setupUi()
     connect(m_sandboxView->circuitController(), &CircuitController::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_sandboxView->circuitController(), &CircuitController::sourceValueChanged, m_simulationController,
             &SimulationController::runSimulation);
+    connect(m_simulationController, &SimulationController::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_challengeController, &ChallengeController::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_challengeController, &ChallengeController::challengeModeChanged, this,
             [this](const bool challengeActive) { setSandboxActionsEnabled(!challengeActive); });

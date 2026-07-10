@@ -26,7 +26,7 @@ Operate as a **professional software engineer**: understand requirements before 
 ## Architecture
 
 - Follow a strict **Model–View–Controller** split.
-- **`digitallogic_core`** has no UI dependencies: `SignalValue`, `Gate`, `Wire`, `SourceNode`, `Circuit`, `SimulationEngine`.
+- **`digitallogic_core`** has no UI dependencies: `SignalValue`, `Gate`, `Wire`, `SourceNode`, `Circuit`, `SimulationEngine`, `CircuitSerializer`, `ChallengeValidator`.
 - **`digitallogic_ui`** depends on core; the executable links UI only.
 - Models must serialize to JSON without including widget headers.
 

@@ -24,6 +24,9 @@ public slots:
     void runSimulation();
     void resetSimulation();
 
+signals:
+    void statusMessage(const QString& message);
+
 private:
     CircuitController* m_circuitController;
     QHash<PinId, SignalValue> m_lastResults;
