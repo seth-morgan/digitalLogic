@@ -1,6 +1,6 @@
 # Digital Logic Simulator
 
-Interactive Qt 6 digital logic sandbox and puzzle game. Build circuits by dragging gates onto the canvas, wire pins together, and watch signals propagate in real time. **Challenge mode** includes seven levels from basic AND/OR through building logic using NAND gates only.
+Interactive Qt 6 digital logic sandbox and puzzle game. Built using Cursor as my aide. Build circuits by dragging gates onto the canvas, wire pins together, and watch signals propagate in real time. **Challenge mode** includes seven levels from basic AND/OR through building logic using NAND gates only.
 
 **Green = true (1)** · **Red = false (0)**
 
