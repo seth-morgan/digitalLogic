@@ -2,7 +2,7 @@
 
 ## Next launch (start here)
 
-**Active phase:** Phase 7 — Live simulation
+**Active phase:** Phase 7 — Live simulation (complete)
 
 Phases 0–6 and Phase 5c are complete.
 
@@ -84,6 +84,10 @@ Phases 0–6 and Phase 5c are complete.
 - [x] **Check Solution** validates all input combinations; **Next Level** unlocks on success
 - [x] `ChallengeValidator`, `ChallengeCatalog`, and `TargetNode` in core
 - [x] QTest coverage for challenge validation
+
+## Phase 7 — Live simulation (complete)
+
+- [x] Toggling source inputs re-runs simulation and updates wire/gate colors immediately
 
 ---
 

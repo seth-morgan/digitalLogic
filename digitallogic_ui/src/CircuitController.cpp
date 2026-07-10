@@ -251,10 +251,10 @@ void CircuitController::toggleSource(const ComponentId sourceId)
     if (SourceGraphicsItem* item = findSourceItem(sourceId)) {
         if (const SourceNode* source = m_circuit.findSource(sourceId)) {
             item->updateValueLabel(source->value());
-            item->clearSimulationHighlight();
         }
     }
 
+    emit sourceValueChanged();
     emit circuitChanged();
 }
 

@@ -50,6 +50,8 @@ void MainWindow::setupUi()
     statusBar()->addWidget(m_statusLabel, 1);
 
     connect(m_sandboxView->circuitController(), &CircuitController::statusMessage, this, &MainWindow::showStatusMessage);
+    connect(m_sandboxView->circuitController(), &CircuitController::sourceValueChanged, m_simulationController,
+            &SimulationController::runSimulation);
     connect(m_challengeController, &ChallengeController::statusMessage, this, &MainWindow::showStatusMessage);
     connect(m_challengeController, &ChallengeController::challengeModeChanged, this,
             [this](const bool challengeActive) { setSandboxActionsEnabled(!challengeActive); });

@@ -75,6 +75,7 @@ signals:
     void circuitChanged();
     void statusMessage(const QString& message);
     void gateBudgetChanged();
+    void sourceValueChanged();
 
 private:
     [[nodiscard]] bool tryConnectPins(const PinId& from, const PinId& to);
