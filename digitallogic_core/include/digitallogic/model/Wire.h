@@ -9,7 +9,7 @@ namespace digitallogic {
  */
 struct Wire final {
     PinId from; ///< Output pin (source output or gate output).
-    PinId to;   ///< Input pin (gate input only in baseline).
+    PinId to;   ///< Input pin (gate or challenge target input).
 };
 
 } // namespace digitallogic

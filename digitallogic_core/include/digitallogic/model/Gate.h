@@ -8,7 +8,7 @@
 namespace digitallogic {
 
 /**
- * @brief Supported logic gate kinds in the baseline simulator.
+ * @brief Supported logic gate kinds in the simulator.
  */
 enum class GateKind {
     And,

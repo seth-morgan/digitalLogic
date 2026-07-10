@@ -120,8 +120,6 @@ digitalLogic/
 ├── LICENSE
 ├── CMakeLists.txt
 ├── readme.md
-├── tasks.md
-├── cursorrules.md
 ├── digitallogic_core/       # Model + simulation (no UI)
 ├── digitallogic_ui/         # Qt widgets + graphics
 ├── app/                     # main.cpp → DigitalLogicSim
@@ -130,11 +128,12 @@ digitalLogic/
 
 ## Contributing
 
-1. Follow the MVC split in [`cursorrules.md`](cursorrules.md).
-2. Keep `digitallogic_core` free of Qt Widgets / QGraphics headers.
-3. Add or update QTest coverage for core behavior changes.
-4. Ensure `cmake --build build` and `ctest` pass before opening a PR.
+1. Keep the MVC split: `digitallogic_core` must not depend on Qt Widgets or QGraphics.
+2. Add or update QTest coverage for core behavior changes.
+3. Ensure `cmake --build build` and `ctest` pass before opening a pull request.
 
 ## License
 
-[MIT License](LICENSE) — Copyright (c) 2026 Seth Morgan
+This project is licensed under the [MIT License](LICENSE).
+
+Copyright (c) 2026 Seth Morgan. You are free to use, modify, and distribute this software under the terms of that license.
