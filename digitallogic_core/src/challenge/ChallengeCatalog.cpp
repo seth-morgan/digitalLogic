@@ -60,7 +60,7 @@ QVector<ChallengeLevel> makeLevels()
         level.index = 0;
         level.title = QStringLiteral("Level 1: AND Gate");
         level.description = QStringLiteral(
-            "Wire inputs A and B through one AND gate so the output lights up only when both inputs are 1.");
+            "Connect inputs A and B to produce the AND truth table at OUT.");
         level.sources = twoSources();
         level.targetPosition = QPointF(900.0, 180.0);
         level.gateAllowances = {{GateKind::And, 1}};
@@ -73,7 +73,7 @@ QVector<ChallengeLevel> makeLevels()
         level.index = 1;
         level.title = QStringLiteral("Level 2: OR Gate");
         level.description = QStringLiteral(
-            "Wire inputs A and B through one OR gate so the output lights up when either input is 1.");
+            "Connect inputs A and B to produce the OR truth table at OUT.");
         level.sources = twoSources();
         level.targetPosition = QPointF(900.0, 180.0);
         level.gateAllowances = {{GateKind::Or, 1}};
@@ -86,7 +86,7 @@ QVector<ChallengeLevel> makeLevels()
         level.index = 2;
         level.title = QStringLiteral("Level 3: XOR Gate");
         level.description = QStringLiteral(
-            "Wire inputs A and B through one XOR gate so the output lights up when the inputs differ.");
+            "Connect inputs A and B to produce the XOR truth table at OUT.");
         level.sources = twoSources();
         level.targetPosition = QPointF(900.0, 180.0);
         level.gateAllowances = {{GateKind::Xor, 1}};
@@ -97,9 +97,9 @@ QVector<ChallengeLevel> makeLevels()
     {
         ChallengeLevel level;
         level.index = 3;
-        level.title = QStringLiteral("Level 4: NOT from NAND");
+        level.title = QStringLiteral("Level 4: Inverter");
         level.description = QStringLiteral(
-            "Build a NOT gate using one NAND. Connect input A to both NAND inputs; the output is NOT A.");
+            "Using only NAND gates, invert input A at OUT.");
         level.sources = {ChallengeSourceSpec{QStringLiteral("A"), QPointF(80.0, 180.0)}};
         level.targetPosition = QPointF(900.0, 180.0);
         level.gateAllowances = {{GateKind::Nand, 1}};
@@ -110,9 +110,9 @@ QVector<ChallengeLevel> makeLevels()
     {
         ChallengeLevel level;
         level.index = 4;
-        level.title = QStringLiteral("Level 5: AND from NAND");
+        level.title = QStringLiteral("Level 5: NAND Logic I");
         level.description = QStringLiteral(
-            "Build A AND B using only NAND gates. Hint: NAND followed by NOT (another NAND) gives AND.");
+            "Using only NAND gates, produce A AND B at OUT.");
         level.sources = twoSources();
         level.targetPosition = QPointF(900.0, 180.0);
         level.gateAllowances = {{GateKind::Nand, 2}};
@@ -123,9 +123,9 @@ QVector<ChallengeLevel> makeLevels()
     {
         ChallengeLevel level;
         level.index = 5;
-        level.title = QStringLiteral("Level 6: OR from NAND");
+        level.title = QStringLiteral("Level 6: NAND Logic II");
         level.description = QStringLiteral(
-            "Build A OR B using only NAND gates. Hint: De Morgan's law — invert each input, then NAND.");
+            "Using only NAND gates, produce A OR B at OUT.");
         level.sources = twoSources();
         level.targetPosition = QPointF(900.0, 180.0);
         level.gateAllowances = {{GateKind::Nand, 3}};
@@ -136,9 +136,9 @@ QVector<ChallengeLevel> makeLevels()
     {
         ChallengeLevel level;
         level.index = 6;
-        level.title = QStringLiteral("Level 7: XOR from NAND");
+        level.title = QStringLiteral("Level 7: NAND Logic III");
         level.description = QStringLiteral(
-            "Build A XOR B using only NAND gates. You have exactly four NAND gates to work with.");
+            "Using only NAND gates, produce A XOR B at OUT.");
         level.sources = twoSources();
         level.targetPosition = QPointF(900.0, 180.0);
         level.gateAllowances = {{GateKind::Nand, 4}};
