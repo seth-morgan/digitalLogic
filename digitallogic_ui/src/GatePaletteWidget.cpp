@@ -23,14 +23,18 @@ GatePaletteWidget::GatePaletteWidget(QWidget* parent)
     auto* title = new QLabel(QStringLiteral("Gates:"), this);
     layout->addWidget(title);
 
-    m_andButton = new QPushButton(QStringLiteral("AND"), this);
-    m_orButton = new QPushButton(QStringLiteral("OR"), this);
-    m_notButton = new QPushButton(QStringLiteral("NOT"), this);
+    m_gateButtons = {
+        {GateKind::And, QStringLiteral("AND"), new QPushButton(QStringLiteral("AND"), this)},
+        {GateKind::Or, QStringLiteral("OR"), new QPushButton(QStringLiteral("OR"), this)},
+        {GateKind::Not, QStringLiteral("NOT"), new QPushButton(QStringLiteral("NOT"), this)},
+        {GateKind::Nand, QStringLiteral("NAND"), new QPushButton(QStringLiteral("NAND"), this)},
+        {GateKind::Xor, QStringLiteral("XOR"), new QPushButton(QStringLiteral("XOR"), this)},
+    };
 
-    for (QPushButton* button : {m_andButton, m_orButton, m_notButton}) {
-        button->setMinimumSize(80, 36);
-        layout->addWidget(button);
-        button->installEventFilter(this);
+    for (GateButtonEntry& entry : m_gateButtons) {
+        entry.button->setMinimumSize(80, 36);
+        layout->addWidget(entry.button);
+        entry.button->installEventFilter(this);
     }
 
     layout->addStretch(1);
@@ -42,45 +46,49 @@ void GatePaletteWidget::setChallengeMode(const bool enabled)
     m_challengeMode = enabled;
     if (!enabled) {
         m_gateBudget.clear();
-        refreshButtonState(m_andButton, GateKind::And, QStringLiteral("AND"));
-        refreshButtonState(m_orButton, GateKind::Or, QStringLiteral("OR"));
-        refreshButtonState(m_notButton, GateKind::Not, QStringLiteral("NOT"));
-        m_andButton->setEnabled(true);
-        m_orButton->setEnabled(true);
-        m_notButton->setEnabled(true);
     }
+    refreshAllButtons();
 }
 
 void GatePaletteWidget::updateGateBudget(const QHash<GateKind, int>& remaining)
 {
     m_gateBudget = remaining;
-    if (!m_challengeMode) {
-        return;
-    }
-
-    refreshButtonState(m_andButton, GateKind::And, QStringLiteral("AND"));
-    refreshButtonState(m_orButton, GateKind::Or, QStringLiteral("OR"));
-    refreshButtonState(m_notButton, GateKind::Not, QStringLiteral("NOT"));
-
-    m_andButton->setEnabled(m_gateBudget.value(GateKind::And, 0) > 0);
-    m_orButton->setEnabled(m_gateBudget.value(GateKind::Or, 0) > 0);
-    m_notButton->setEnabled(m_gateBudget.value(GateKind::Not, 0) > 0);
+    refreshAllButtons();
 }
 
-void GatePaletteWidget::refreshButtonState(QPushButton* button, const GateKind kind, const QString& baseLabel)
+void GatePaletteWidget::refreshButtonState(GateButtonEntry& entry)
 {
-    if (button == nullptr) {
+    if (entry.button == nullptr) {
         return;
     }
 
-    if (!m_challengeMode || !m_gateBudget.contains(kind)) {
-        button->setText(baseLabel);
-        button->setVisible(!m_challengeMode || m_gateBudget.contains(kind));
+    if (!m_challengeMode || !m_gateBudget.contains(entry.kind)) {
+        entry.button->setText(entry.label);
+        entry.button->setVisible(!m_challengeMode || m_gateBudget.contains(entry.kind));
+        entry.button->setEnabled(!m_challengeMode);
         return;
     }
 
-    button->setVisible(true);
-    button->setText(QStringLiteral("%1 (%2)").arg(baseLabel).arg(m_gateBudget.value(kind)));
+    entry.button->setVisible(true);
+    entry.button->setText(QStringLiteral("%1 (%2)").arg(entry.label).arg(m_gateBudget.value(entry.kind)));
+    entry.button->setEnabled(m_gateBudget.value(entry.kind) > 0);
+}
+
+void GatePaletteWidget::refreshAllButtons()
+{
+    for (GateButtonEntry& entry : m_gateButtons) {
+        refreshButtonState(entry);
+    }
+}
+
+GatePaletteWidget::GateButtonEntry* GatePaletteWidget::findEntry(QObject* watched)
+{
+    for (GateButtonEntry& entry : m_gateButtons) {
+        if (entry.button == watched) {
+            return &entry;
+        }
+    }
+    return nullptr;
 }
 
 bool GatePaletteWidget::eventFilter(QObject* watched, QEvent* event)
@@ -94,29 +102,13 @@ bool GatePaletteWidget::eventFilter(QObject* watched, QEvent* event)
         return QWidget::eventFilter(watched, event);
     }
 
-    if (watched == m_andButton) {
-        if (!m_andButton->isEnabled()) {
-            return true;
-        }
-        startGateDrag(GateKind::And, m_andButton);
-        return true;
-    }
-    if (watched == m_orButton) {
-        if (!m_orButton->isEnabled()) {
-            return true;
-        }
-        startGateDrag(GateKind::Or, m_orButton);
-        return true;
-    }
-    if (watched == m_notButton) {
-        if (!m_notButton->isEnabled()) {
-            return true;
-        }
-        startGateDrag(GateKind::Not, m_notButton);
-        return true;
+    GateButtonEntry* entry = findEntry(watched);
+    if (entry == nullptr || entry->button == nullptr || !entry->button->isEnabled()) {
+        return QWidget::eventFilter(watched, event);
     }
 
-    return QWidget::eventFilter(watched, event);
+    startGateDrag(entry->kind, entry->button);
+    return true;
 }
 
 void GatePaletteWidget::startGateDrag(const GateKind kind, QWidget* sourceWidget)

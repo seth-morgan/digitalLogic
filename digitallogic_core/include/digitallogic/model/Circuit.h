@@ -1,8 +1,10 @@
 #pragma once
 
 #include "digitallogic/gates/AndGate.h"
+#include "digitallogic/gates/NandGate.h"
 #include "digitallogic/gates/NotGate.h"
 #include "digitallogic/gates/OrGate.h"
+#include "digitallogic/gates/XorGate.h"
 #include "digitallogic/model/ComponentIdFactory.h"
 #include "digitallogic/model/Gate.h"
 #include "digitallogic/model/PinId.h"

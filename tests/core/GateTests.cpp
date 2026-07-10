@@ -13,6 +13,10 @@ private slots:
     void orGate_anyTrue_returnsTrue();
     void orGate_allFalse_returnsFalse();
     void notGate_invertsValue();
+    void nandGate_allTrue_returnsFalse();
+    void nandGate_anyFalse_returnsTrue();
+    void xorGate_inputsDiffer_returnsTrue();
+    void xorGate_inputsMatch_returnsFalse();
 };
 
 void GateTests::andGate_allTrue_returnsTrue()
@@ -39,6 +43,26 @@ void GateTests::notGate_invertsValue()
 {
     QCOMPARE(SimulationEngine::evaluateNot(SignalValue::True), SignalValue::False);
     QCOMPARE(SimulationEngine::evaluateNot(SignalValue::False), SignalValue::True);
+}
+
+void GateTests::nandGate_allTrue_returnsFalse()
+{
+    QCOMPARE(SimulationEngine::evaluateNand({SignalValue::True, SignalValue::True}), SignalValue::False);
+}
+
+void GateTests::nandGate_anyFalse_returnsTrue()
+{
+    QCOMPARE(SimulationEngine::evaluateNand({SignalValue::True, SignalValue::False}), SignalValue::True);
+}
+
+void GateTests::xorGate_inputsDiffer_returnsTrue()
+{
+    QCOMPARE(SimulationEngine::evaluateXor({SignalValue::True, SignalValue::False}), SignalValue::True);
+}
+
+void GateTests::xorGate_inputsMatch_returnsFalse()
+{
+    QCOMPARE(SimulationEngine::evaluateXor({SignalValue::True, SignalValue::True}), SignalValue::False);
 }
 
 QTEST_APPLESS_MAIN(GateTests)

@@ -68,6 +68,19 @@ ChallengeValidationResult ChallengeValidator::validate(const Circuit& circuit, c
   }
 
   const QHash<GateKind, int> gateCounts = countGatesByKind(circuit);
+
+  QHash<GateKind, int> allowedCounts;
+  for (const ChallengeGateAllowance& allowance : level.gateAllowances) {
+    allowedCounts.insert(allowance.kind, allowance.maxCount);
+  }
+
+  for (auto it = gateCounts.begin(); it != gateCounts.end(); ++it) {
+    if (!allowedCounts.contains(it.key())) {
+      result.message = QStringLiteral("Only the allowed gate types may be used for this level.");
+      return result;
+    }
+  }
+
   for (const ChallengeGateAllowance& allowance : level.gateAllowances) {
     const int placed = gateCounts.value(allowance.kind, 0);
     if (placed > allowance.maxCount) {

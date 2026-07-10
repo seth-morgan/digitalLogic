@@ -13,7 +13,9 @@ namespace digitallogic {
 enum class GateKind {
     And,
     Or,
-    Not
+    Not,
+    Nand,
+    Xor
 };
 
 /**

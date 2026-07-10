@@ -2,9 +2,9 @@
 
 ## Next launch (start here)
 
-**Active phase:** Phase 5c — More gates (future)
+**Active phase:** Phase 7 — Live simulation
 
-Phases 0–5b and Phase 6 are complete. See [Phase 5c](#phase-5c--more-gates-future) for next work.
+Phases 0–6 and Phase 5c are complete.
 
 ---
 
@@ -69,9 +69,12 @@ Phases 0–5b and Phase 6 are complete. See [Phase 5c](#phase-5c--more-gates-fut
 - [x] `CircuitSerializer` in core (no UI headers)
 - [x] QTest round-trip and invalid wire rejection
 
-### Phase 5c — More gates (future)
+### Phase 5c — More gates (complete)
 
-- [ ] Additional gates (NAND, XOR, etc.)
+- [x] NAND and XOR gate types in core, palette, and serializer
+- [x] Challenge levels 3–7: XOR, NOT/AND/OR/XOR built from NAND only
+- [x] Validator rejects disallowed gate types in challenge mode
+- [x] QTest coverage for NAND and XOR
 
 ## Phase 6 — Challenge mode (complete)
 

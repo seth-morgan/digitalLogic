@@ -4,11 +4,12 @@
 
 #include <QHash>
 #include <QPushButton>
+#include <QVector>
 
 namespace digitallogic::ui {
 
 /**
- * @brief Bottom palette with draggable AND, OR, and NOT gate templates.
+ * @brief Bottom palette with draggable gate templates.
  */
 class GatePaletteWidget final : public QWidget {
     Q_OBJECT
@@ -26,12 +27,18 @@ protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
-    void startGateDrag(GateKind kind, QWidget* sourceWidget);
-    void refreshButtonState(QPushButton* button, GateKind kind, const QString& baseLabel);
+    struct GateButtonEntry final {
+        GateKind kind;
+        QString label;
+        QPushButton* button{nullptr};
+    };
 
-    QPushButton* m_andButton{nullptr};
-    QPushButton* m_orButton{nullptr};
-    QPushButton* m_notButton{nullptr};
+    void startGateDrag(GateKind kind, QWidget* sourceWidget);
+    void refreshButtonState(GateButtonEntry& entry);
+    void refreshAllButtons();
+    [[nodiscard]] GateButtonEntry* findEntry(QObject* watched);
+
+    QVector<GateButtonEntry> m_gateButtons;
     bool m_challengeMode{false};
     QHash<GateKind, int> m_gateBudget;
 };

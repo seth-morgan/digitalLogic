@@ -70,6 +70,10 @@ QString GateGraphicsItem::gateLabel(const GateKind kind)
         return QStringLiteral("OR");
     case GateKind::Not:
         return QStringLiteral("NOT");
+    case GateKind::Nand:
+        return QStringLiteral("NAND");
+    case GateKind::Xor:
+        return QStringLiteral("XOR");
     default:
         return QStringLiteral("?");
     }

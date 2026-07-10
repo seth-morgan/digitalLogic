@@ -2,8 +2,10 @@
 
 #include "digitallogic/model/PinIndices.h"
 #include "digitallogic/gates/AndGate.h"
+#include "digitallogic/gates/NandGate.h"
 #include "digitallogic/gates/NotGate.h"
 #include "digitallogic/gates/OrGate.h"
+#include "digitallogic/gates/XorGate.h"
 
 #include <QSet>
 #include <QVector>
@@ -134,6 +136,16 @@ SignalValue SimulationEngine::evaluateOr(const QVector<SignalValue>& inputs)
 SignalValue SimulationEngine::evaluateNot(const SignalValue input)
 {
     return NotGate(ComponentId{}).evaluate(QVector<SignalValue>{input});
+}
+
+SignalValue SimulationEngine::evaluateNand(const QVector<SignalValue>& inputs)
+{
+    return NandGate(ComponentId{}).evaluate(inputs);
+}
+
+SignalValue SimulationEngine::evaluateXor(const QVector<SignalValue>& inputs)
+{
+    return XorGate(ComponentId{}).evaluate(inputs);
 }
 
 std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit,

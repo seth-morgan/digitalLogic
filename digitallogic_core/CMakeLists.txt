@@ -9,6 +9,8 @@ add_library(digitallogic_core STATIC
     src/gates/AndGate.cpp
     src/gates/OrGate.cpp
     src/gates/NotGate.cpp
+    src/gates/NandGate.cpp
+    src/gates/XorGate.cpp
     src/model/Wire.cpp
     src/model/WireValidation.cpp
     src/model/CircuitSerializer.cpp

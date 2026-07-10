@@ -21,6 +21,10 @@ constexpr int kFormatVersion = 1;
         return QStringLiteral("or");
     case GateKind::Not:
         return QStringLiteral("not");
+    case GateKind::Nand:
+        return QStringLiteral("nand");
+    case GateKind::Xor:
+        return QStringLiteral("xor");
     default:
         return QStringLiteral("unknown");
     }
@@ -36,6 +40,12 @@ constexpr int kFormatVersion = 1;
     }
     if (text == QStringLiteral("not")) {
         return GateKind::Not;
+    }
+    if (text == QStringLiteral("nand")) {
+        return GateKind::Nand;
+    }
+    if (text == QStringLiteral("xor")) {
+        return GateKind::Xor;
     }
     return std::nullopt;
 }

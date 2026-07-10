@@ -37,6 +37,12 @@ std::optional<ComponentId> Circuit::addGate(const GateKind kind, const QPointF& 
     case GateKind::Not:
         gate = std::make_unique<NotGate>(id);
         break;
+    case GateKind::Nand:
+        gate = std::make_unique<NandGate>(id);
+        break;
+    case GateKind::Xor:
+        gate = std::make_unique<XorGate>(id);
+        break;
     default:
         return std::nullopt;
     }
@@ -290,6 +296,12 @@ bool Circuit::addGateWithId(const ComponentId id, const GateKind kind, const QPo
         break;
     case GateKind::Not:
         gate = std::make_unique<NotGate>(id);
+        break;
+    case GateKind::Nand:
+        gate = std::make_unique<NandGate>(id);
+        break;
+    case GateKind::Xor:
+        gate = std::make_unique<XorGate>(id);
         break;
     default:
         return false;
