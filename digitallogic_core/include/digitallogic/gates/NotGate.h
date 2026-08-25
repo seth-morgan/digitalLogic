@@ -16,9 +16,14 @@ namespace digitallogic {
  */
 class NotGate final : public Gate {
 public:
+    /**
+     * @brief Constructs a single-input NOT gate with the given component id.
+     */
     explicit NotGate(ComponentId id);
 
-    // Inverts the first input; returns Unknown when the input list is empty.
+    /**
+     * @brief Inverts the first input; returns Unknown when the input list is empty.
+     */
     [[nodiscard]] SignalValue evaluate(const QVector<SignalValue>& inputs) const override;
 };
 
