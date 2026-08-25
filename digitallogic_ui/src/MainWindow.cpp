@@ -1,3 +1,9 @@
+/**
+ * @file MainWindow.cpp
+ * @brief Main application window: sandbox layout, toolbar actions, and controller wiring.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/MainWindow.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -40,6 +46,7 @@ void MainWindow::setupUi()
     m_challengePanel = new ChallengePanelWidget(central);
     m_gatePalette = new GatePaletteWidget(central);
 
+    // Challenge banner on top, canvas takes most space, gate palette at bottom.
     layout->addWidget(m_challengePanel);
     layout->addWidget(m_sandboxView, 4);
     layout->addWidget(m_gatePalette, 1);
@@ -56,6 +63,7 @@ void MainWindow::setupUi()
     statusBar()->addWidget(m_statusLabel, 1);
 
     connect(m_sandboxView->circuitController(), &CircuitController::statusMessage, this, &MainWindow::showStatusMessage);
+    // Toggle a source immediately re-runs simulation so pin colors stay current.
     connect(m_sandboxView->circuitController(), &CircuitController::sourceValueChanged, m_simulationController,
             &SimulationController::runSimulation);
     connect(m_simulationController, &SimulationController::statusMessage, this, &MainWindow::showStatusMessage);
@@ -120,6 +128,7 @@ void MainWindow::openChallengeMode()
     }
 }
 
+// Save/Open are sandbox-only; challenge levels own the circuit layout.
 void MainWindow::setSandboxActionsEnabled(const bool enabled)
 {
     const bool sandboxEnabled = enabled;
@@ -134,6 +143,7 @@ void MainWindow::setSandboxActionsEnabled(const bool enabled)
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     QMainWindow::resizeEvent(event);
+    // Keep the celebration overlay covering the full central area.
     if (m_winOverlay != nullptr && centralWidget() != nullptr) {
         m_winOverlay->setGeometry(centralWidget()->rect());
     }
