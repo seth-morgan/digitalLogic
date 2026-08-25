@@ -1,3 +1,9 @@
+/**
+ * @file WireGraphicsItem.h
+ * @brief Declares the graphics item for a wire connecting two pins.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/PinId.h"
@@ -23,12 +29,14 @@ public:
     void updatePath();
     void setSignalValue(SignalValue value, bool simulated);
     void clearSimulationHighlight();
+    // Hit-test with a wider tolerance than the thin painted stroke.
     [[nodiscard]] bool containsScenePoint(const QPointF& scenePos) const;
 
 protected:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
     QPainterPath shape() const override;
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+    // Drives the animated signal-flow dashes along the wire.
     void advance(int phase) override;
 
 private:
