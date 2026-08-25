@@ -1,3 +1,9 @@
+/**
+ * @file PinIndices.h
+ * @brief Helpers that map logical pin roles to numeric pin indices.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 namespace digitallogic {
@@ -32,6 +38,7 @@ namespace digitallogic {
  */
 [[nodiscard]] inline constexpr int gateOutputPinIndex(const int inputCount) noexcept
 {
+    // Place the output after the last input so indices never collide.
     return inputCount;
 }
 
