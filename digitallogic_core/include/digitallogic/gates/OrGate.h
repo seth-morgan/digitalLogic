@@ -16,9 +16,14 @@ namespace digitallogic {
  */
 class OrGate final : public Gate {
 public:
+    /**
+     * @brief Constructs a two-input OR gate with the given component id.
+     */
     explicit OrGate(ComponentId id);
 
-    // Returns True if any input is True; False only when every input is False.
+    /**
+     * @brief Returns True if any input is True; False only when every input is False.
+     */
     [[nodiscard]] SignalValue evaluate(const QVector<SignalValue>& inputs) const override;
 };
 
