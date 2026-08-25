@@ -1,3 +1,9 @@
+/**
+ * @file TargetNode.cpp
+ * @brief Implements the challenge output target node.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/TargetNode.h"
 
 namespace digitallogic {
