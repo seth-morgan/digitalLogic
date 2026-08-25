@@ -1,3 +1,9 @@
+/**
+ * @file MainWindow.h
+ * @brief Declares the top-level window wiring toolbar, sandbox, and challenge UI.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include <QAction>
@@ -31,6 +37,7 @@ private:
     void openCircuit();
     void openChallengeMode();
     void showStatusMessage(const QString& message);
+    // Disables save/open/clear while challenge mode owns the canvas.
     void setSandboxActionsEnabled(bool enabled);
     void resizeEvent(QResizeEvent* event) override;
 
@@ -39,6 +46,7 @@ private:
     ChallengePanelWidget* m_challengePanel{nullptr};
     SimulationController* m_simulationController{nullptr};
     ChallengeController* m_challengeController{nullptr};
+    // Full-window flash; resized to match MainWindow on every resize.
     WinCelebrationOverlay* m_winOverlay{nullptr};
     QLabel* m_statusLabel{nullptr};
     QAction* m_saveAction{nullptr};
