@@ -1,3 +1,9 @@
+/**
+ * @file SimulationEngine.cpp
+ * @brief Topologically evaluates circuits and resolves pin signal values.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/SimulationEngine.h"
 
 #include "digitallogic/model/PinIndices.h"
@@ -24,12 +30,14 @@ namespace {
     return PinId{componentId, gateOutputPinIndex(inputCount)};
 }
 
+// DFS cycle check: visiting = on the current path, visited = fully explored.
 [[nodiscard]] bool dependsOn(const Gate* gate, const Circuit& circuit, const QHash<ComponentId, QSet<ComponentId>>& adjacency, QSet<ComponentId>& visiting, QSet<ComponentId>& visited, QString& error)
 {
     if (visited.contains(gate->id())) {
         return true;
     }
 
+    // Re-entering a node still on the stack means a feedback loop exists.
     if (visiting.contains(gate->id())) {
         error = QStringLiteral("Cycle detected in circuit");
         return false;
@@ -55,6 +63,7 @@ namespace {
 
 [[nodiscard]] std::optional<QVector<ComponentId>> topologicalOrder(const Circuit& circuit, QString& error)
 {
+    // adjacency[gate] = set of upstream component ids that drive its inputs.
     QHash<ComponentId, QSet<ComponentId>> adjacency;
     for (const Wire& wire : circuit.wires()) {
         adjacency[wire.to.componentId].insert(wire.from.componentId);
@@ -64,6 +73,7 @@ namespace {
     QSet<ComponentId> visited;
     QVector<ComponentId> order;
 
+    // First pass: reject cyclic graphs before building the evaluation order.
     for (const auto& gatePtr : circuit.gates()) {
         if (!dependsOn(gatePtr.get(), circuit, adjacency, visiting, visited, error)) {
             return std::nullopt;
@@ -73,6 +83,7 @@ namespace {
     visiting.clear();
     visited.clear();
 
+    // Recursive lambda (self) performs a post-order DFS to emit gates after dependencies.
     const auto visit = [&](const auto& self, ComponentId gateId) -> bool {
         if (visited.contains(gateId)) {
             return true;
@@ -95,7 +106,7 @@ namespace {
         }
         visiting.remove(gateId);
         visited.insert(gateId);
-        order.push_back(gateId);
+        order.push_back(gateId); // Emit only after all upstream gates.
         return true;
     };
 
@@ -114,6 +125,7 @@ namespace {
         return it.value();
     }
 
+    // Fall back to the live source value when the pin belongs to a SourceNode.
     if (const SourceNode* source = circuit.findSource(pin.componentId)) {
         return source->value();
     }
@@ -154,11 +166,12 @@ std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit,
     QString error;
     const std::optional<QVector<ComponentId>> order = topologicalOrder(circuit, error);
     if (!order.has_value()) {
-        return std::nullopt;
+        return std::nullopt; // Cyclic circuit cannot be evaluated safely.
     }
 
     QHash<PinId, SignalValue> resolved;
 
+    // Seed the map with source outputs (optionally overridden for challenge tests).
     for (const SourceNode& source : circuit.sources()) {
         SignalValue value = source.value();
         if (sourceOverrides != nullptr) {
@@ -170,6 +183,7 @@ std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit,
         resolved.insert(sourceOutputPin(source.id()), value);
     }
 
+    // Evaluate each gate once its upstream pins are known.
     for (const ComponentId gateId : order.value()) {
         const Gate* gate = circuit.findGate(gateId);
         if (gate == nullptr) {
@@ -182,6 +196,7 @@ std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit,
             const PinId inputPin{gateId, inputIndex};
             SignalValue inputValue = SignalValue::Unknown;
 
+            // Find the single wire that (may) drive this input pin.
             for (const Wire& wire : circuit.wires()) {
                 if (wire.to == inputPin) {
                     inputValue = resolvePin(wire.from, circuit, resolved);
@@ -195,6 +210,7 @@ std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit,
         resolved.insert(gateOutputPin(gateId, gate->inputCount()), gate->evaluate(inputs));
     }
 
+    // Copy driven values onto destination pins so UI coloring can read either end.
     for (const Wire& wire : circuit.wires()) {
         if (!resolved.contains(wire.to)) {
             resolved.insert(wire.to, resolvePin(wire.from, circuit, resolved));
