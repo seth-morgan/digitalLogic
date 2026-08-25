@@ -8,11 +8,17 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Constructs a two-input OR gate with the given component id.
+ */
 OrGate::OrGate(const ComponentId id)
     : Gate(id, GateKind::Or, 2) // Two-input OR by default
 {
 }
 
+/**
+ * @brief Returns True if any input is True; False only when every input is False.
+ */
 SignalValue OrGate::evaluate(const QVector<SignalValue>& inputs) const
 {
     if (inputs.isEmpty()) {
