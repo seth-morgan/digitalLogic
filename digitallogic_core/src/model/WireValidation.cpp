@@ -1,3 +1,9 @@
+/**
+ * @file WireValidation.cpp
+ * @brief Maps wire validation results to status-bar friendly messages.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/WireValidation.h"
 
 namespace digitallogic {
