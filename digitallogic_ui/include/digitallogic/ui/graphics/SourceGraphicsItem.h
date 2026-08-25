@@ -1,3 +1,9 @@
+/**
+ * @file SourceGraphicsItem.h
+ * @brief Declares the graphics item for a toggleable input source.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/ComponentId.h"
@@ -27,6 +33,7 @@ public:
     void refreshFromModel(SignalValue value);
     void updateValueLabel(SignalValue value);
     void setDisplayLabel(const QString& label);
+    // Locked sources (challenge mode) ignore toggle clicks and delete/move.
     void setLocked(bool locked);
     void clearSimulationHighlight();
     void updateWirePaths();
