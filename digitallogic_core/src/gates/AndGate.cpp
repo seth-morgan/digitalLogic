@@ -8,11 +8,17 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Constructs a two-input AND gate with the given component id.
+ */
 AndGate::AndGate(const ComponentId id)
     : Gate(id, GateKind::And, 2) // Two-input AND by default
 {
 }
 
+/**
+ * @brief Returns True only if every input is True; False or Unknown otherwise.
+ */
 SignalValue AndGate::evaluate(const QVector<SignalValue>& inputs) const
 {
     // Need at least two resolved inputs to produce a known AND result.
