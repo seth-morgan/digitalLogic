@@ -1,3 +1,9 @@
+/**
+ * @file SourceGraphicsItem.cpp
+ * @brief Movable signal source block with toggleable value and output pin.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/graphics/SourceGraphicsItem.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -76,11 +82,13 @@ void SourceGraphicsItem::clearSimulationHighlight()
 
 void SourceGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    // Defer to SandboxView while a wire drag is active.
     if (m_controller != nullptr && m_controller->isWireDragInProgress()) {
         event->ignore();
         return;
     }
 
+    // Clicks on the output pin should start a wire, not toggle the source.
     if (m_outputPin != nullptr) {
         const QPointF pinLocal = m_outputPin->mapFromScene(event->scenePos());
         if (m_outputPin->contains(pinLocal)) {
