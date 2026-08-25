@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeValidator.h
+ * @brief Declares validation of a player circuit against a challenge level.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/challenge/ChallengeLevel.h"
