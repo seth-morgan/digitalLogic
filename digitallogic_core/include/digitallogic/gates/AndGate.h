@@ -16,9 +16,14 @@ namespace digitallogic {
  */
 class AndGate final : public Gate {
 public:
+    /**
+     * @brief Constructs a two-input AND gate with the given component id.
+     */
     explicit AndGate(ComponentId id);
 
-    // Returns True only if every input is True; False or Unknown otherwise.
+    /**
+     * @brief Returns True only if every input is True; False or Unknown otherwise.
+     */
     [[nodiscard]] SignalValue evaluate(const QVector<SignalValue>& inputs) const override;
 };
 
