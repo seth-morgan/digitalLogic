@@ -1,3 +1,9 @@
+/**
+ * @file WireGraphicsItem.cpp
+ * @brief Selectable wire between two pins with animated signal-flow dashes.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/graphics/WireGraphicsItem.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -78,6 +84,7 @@ void WireGraphicsItem::applySelectionStyle()
     setPen(wirePen);
 }
 
+// Called by QGraphicsScene::advance; scrolls the flow dash pattern along the wire.
 void WireGraphicsItem::advance(const int phase)
 {
     if (phase != 0 || !m_simulated || m_signalValue == SignalValue::Unknown) {
@@ -94,6 +101,7 @@ void WireGraphicsItem::advance(const int phase)
 
 void WireGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
+    // Suppress Qt's default selection outline; we style selection via pen color.
     QStyleOptionGraphicsItem styleOption(*option);
     styleOption.state &= ~QStyle::State_Selected;
 
@@ -116,6 +124,7 @@ void WireGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
     painter->drawLine(line());
 }
 
+// Widen the hit region beyond the visual stroke for easier selection.
 QPainterPath WireGraphicsItem::shape() const
 {
     QPainterPath path;
