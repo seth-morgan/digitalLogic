@@ -1,3 +1,9 @@
+/**
+ * @file SignalValue.h
+ * @brief Defines the three-state digital signal used across the simulator.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 namespace digitallogic {
@@ -6,9 +12,9 @@ namespace digitallogic {
  * @brief Digital signal value used throughout the simulation engine.
  */
 enum class SignalValue {
-    False = 0,
-    True = 1,
-    Unknown = 2
+    False = 0,   // Logic low
+    True = 1,    // Logic high
+    Unknown = 2  // Unconnected or unresolved wire
 };
 
 /**
