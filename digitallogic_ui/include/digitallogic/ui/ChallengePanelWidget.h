@@ -1,3 +1,9 @@
+/**
+ * @file ChallengePanelWidget.h
+ * @brief Declares the in-game panel for challenge level info and actions.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include <QWidget>
@@ -17,6 +23,7 @@ public:
     explicit ChallengePanelWidget(QWidget* parent = nullptr);
 
     void showLevel(const QString& title, const QString& description, bool hasNextLevel);
+    // Enables Next Level only after a successful check.
     void setLevelSolved(bool solved);
     void setVisibleForChallenge(bool visible);
 
