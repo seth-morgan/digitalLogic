@@ -1,3 +1,9 @@
+/**
+ * @file XorGate.h
+ * @brief Declares the two-input exclusive-OR (XOR) gate.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/Gate.h"
@@ -12,6 +18,7 @@ class XorGate final : public Gate {
 public:
     explicit XorGate(ComponentId id);
 
+    // Returns True when the two inputs differ; False when they match.
     [[nodiscard]] SignalValue evaluate(const QVector<SignalValue>& inputs) const override;
 };
 
