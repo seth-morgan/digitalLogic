@@ -1,3 +1,9 @@
+/**
+ * @file Circuit.h
+ * @brief Owns sources, gates, targets, wires, and canvas placements for one circuit.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/gates/AndGate.h"
@@ -36,6 +42,7 @@ struct ComponentPlacement final {
 class Circuit final {
 public:
     Circuit() = default;
+    // unique_ptr gates make Circuit move-only (no deep copy of the netlist).
     Circuit(const Circuit&) = delete;
     Circuit& operator=(const Circuit&) = delete;
     Circuit(Circuit&&) noexcept = default;
