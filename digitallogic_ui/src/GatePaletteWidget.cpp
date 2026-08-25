@@ -1,3 +1,9 @@
+/**
+ * @file GatePaletteWidget.cpp
+ * @brief Bottom palette of draggable gate buttons with optional challenge budgets.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/GatePaletteWidget.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -38,6 +44,7 @@ GatePaletteWidget::GatePaletteWidget(QWidget* parent)
         entry.button->setMinimumSize(88, 42);
         entry.button->setStyleSheet(AppTheme::gateButtonStylesheet(entry.kind));
         layout->addWidget(entry.button);
+        // Event filter intercepts presses so we start a drag instead of a click.
         entry.button->installEventFilter(this);
     }
 
@@ -67,6 +74,7 @@ void GatePaletteWidget::refreshButtonState(GateButtonEntry& entry)
         return;
     }
 
+    // Sandbox: all gates enabled. Challenge: only budgeted kinds, with remaining counts.
     if (!m_challengeMode || !m_gateBudget.contains(entry.kind)) {
         entry.button->setText(entry.label);
         entry.button->setVisible(!m_challengeMode || m_gateBudget.contains(entry.kind));
