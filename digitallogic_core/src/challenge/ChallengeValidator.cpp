@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeValidator.cpp
+ * @brief Checks gate budgets and truth-table correctness for challenge solutions.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/challenge/ChallengeValidator.h"
 
 #include "digitallogic/model/PinIndices.h"
@@ -16,6 +22,7 @@ namespace {
     return counts;
 }
 
+// True when the challenge OUT target has at least one incoming wire.
 [[nodiscard]] bool targetHasInputWire(const Circuit& circuit, const ComponentId targetId)
 {
     const PinId targetInput{targetId, targetInputPinIndex()};
@@ -106,6 +113,7 @@ ChallengeValidationResult ChallengeValidator::validate(const Circuit& circuit, c
     }
 
     for (const ChallengeTestCase& testCase : level.testCases) {
+        // Apply this row of the truth table via overrides (does not mutate the circuit).
         QHash<ComponentId, SignalValue> overrides;
         for (auto it = testCase.sourceValues.begin(); it != testCase.sourceValues.end(); ++it) {
             const ComponentId sourceId = sourceIdsByLabel.value(it.key());
