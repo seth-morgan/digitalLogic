@@ -1,3 +1,9 @@
+/**
+ * @file WinCelebrationOverlay.h
+ * @brief Declares the full-window flash overlay shown on challenge completion.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include <QWidget>
@@ -27,6 +33,7 @@ private:
 
     QLabel* m_banner{nullptr};
     QGraphicsOpacityEffect* m_opacityEffect{nullptr};
+    // 0..1 strength of the full-window color flash during the celebration.
     qreal m_flashStrength{0.0};
     bool m_active{false};
 };
