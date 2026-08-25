@@ -1,3 +1,9 @@
+/**
+ * @file PinGraphicsItem.cpp
+ * @brief Circular pin graphics with signal coloring and pending-wire highlight.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -23,6 +29,7 @@ PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, CircuitC
     setPen(QPen(AppTheme::componentBorder(), 1.5));
     setZValue(10.0);
     setAcceptHoverEvents(true);
+    // Mouse handling for wire drag lives on SandboxView, not the pin itself.
     setAcceptedMouseButtons(Qt::NoButton);
 }
 
