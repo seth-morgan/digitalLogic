@@ -1,3 +1,9 @@
+/**
+ * @file GateGraphicsItem.h
+ * @brief Declares the graphics item for a logic gate with input/output pins.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/ComponentId.h"
@@ -27,6 +33,7 @@ public:
 
     void setOutputSignal(SignalValue value, bool simulated);
     void clearSimulationHighlight();
+    // Recomputes attached wire endpoints after the gate is moved.
     void updateWirePaths();
 
 protected:
