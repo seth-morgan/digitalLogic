@@ -1,3 +1,9 @@
+/**
+ * @file GateGraphicsItem.cpp
+ * @brief Movable logic-gate block with input/output pins and selection styling.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/graphics/GateGraphicsItem.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -32,6 +38,7 @@ GateGraphicsItem::GateGraphicsItem(const ComponentId componentId, const GateKind
     label->setDefaultTextColor(AppTheme::textPrimary());
     label->setPos(18.0, 16.0);
 
+    // Space input pins evenly along the left edge (NOT has a single input).
     const double inputSpacing = bodyHeight / static_cast<double>(inputCount + 1);
     for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex) {
         auto* inputPin = new PinGraphicsItem(PinId{componentId, inputIndex}, PinGraphicsItem::PinRole::GateInput,
@@ -110,6 +117,7 @@ void GateGraphicsItem::updateWirePaths()
 
 QVariant GateGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
 {
+    // Persist model position and redraw attached wires when the gate is moved.
     if (change == ItemPositionHasChanged || change == ItemScenePositionHasChanged) {
         updateWirePaths();
         if (m_controller != nullptr) {
