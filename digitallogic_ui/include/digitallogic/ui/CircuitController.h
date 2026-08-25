@@ -1,3 +1,9 @@
+/**
+ * @file CircuitController.h
+ * @brief Declares the controller that syncs sandbox graphics with the circuit model.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/challenge/ChallengeLevel.h"
@@ -38,6 +44,7 @@ public:
 
     void initializeDefaultSources();
     void restoreSandboxMode();
+    // Builds locked challenge sources/target and returns ids for validation.
     void loadChallengeLevel(const ChallengeLevel& level, QHash<QString, ComponentId>& outSourceIdsByLabel,
                               ComponentId& outTargetId);
     void setChallengeGateBudget(const QHash<GateKind, int>& remaining);
@@ -66,6 +73,7 @@ public:
     [[nodiscard]] SourceGraphicsItem* findSourceItem(ComponentId id) const;
     [[nodiscard]] TargetGraphicsItem* findTargetItem(ComponentId id) const;
     [[nodiscard]] GateGraphicsItem* findGateItem(ComponentId id) const;
+    // Challenge sources/target cannot be deleted or moved by the player.
     [[nodiscard]] bool isProtectedComponent(ComponentId id) const;
 
     void applySimulationResults(const QHash<PinId, SignalValue>& pinValues);
@@ -95,6 +103,7 @@ private:
     SandboxView* m_view;
     Circuit m_circuit;
     PinGraphicsItem* m_wireDragFromPin{nullptr};
+    // Temporary rubber-band line while the user drags a new wire.
     QGraphicsLineItem* m_wirePreviewLine{nullptr};
     QVector<WireGraphicsItem*> m_wireItems;
     bool m_wireDragInProgress{false};
@@ -102,6 +111,7 @@ private:
     ComponentId m_challengeTargetId{};
     QHash<QString, ComponentId> m_challengeSourceIdsByLabel;
     QHash<GateKind, int> m_challengeGateBudget;
+    // Original level limits used when refreshing remaining budget after place/delete.
     QHash<GateKind, int> m_challengeGateBudgetTotal;
 };
 
