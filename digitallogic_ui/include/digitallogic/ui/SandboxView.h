@@ -1,3 +1,9 @@
+/**
+ * @file SandboxView.h
+ * @brief Declares the graphics view used as the circuit sandbox canvas.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include <QGraphicsView>
@@ -30,6 +36,7 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
 private:
+    // Starts a wire drag when the press lands on a pin hotspot.
     [[nodiscard]] bool tryBeginWireAt(const QPointF& scenePos);
 
     CircuitController* m_circuitController{nullptr};
