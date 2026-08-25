@@ -1,3 +1,9 @@
+/**
+ * @file CircuitSerializer.cpp
+ * @brief Serializes and deserializes Circuit objects to versioned JSON.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/CircuitSerializer.h"
 
 #include "digitallogic/model/ComponentIdFactory.h"
@@ -10,7 +16,7 @@ namespace digitallogic {
 
 namespace {
 
-constexpr int kFormatVersion = 1;
+constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incompatibly.
 
 [[nodiscard]] QString gateKindToString(const GateKind kind)
 {
@@ -120,13 +126,14 @@ QJsonObject CircuitSerializer::toJson(const Circuit& circuit)
 
 std::optional<Circuit> CircuitSerializer::fromJson(const QJsonObject& json, QString& error)
 {
+    // Reject files that lack a matching version field.
     if (!json.contains(QStringLiteral("version")) || json.value(QStringLiteral("version")).toInt() != kFormatVersion) {
         error = QStringLiteral("Unsupported circuit file format.");
         return std::nullopt;
     }
 
     Circuit circuit;
-    std::uint64_t maxId = 0;
+    std::uint64_t maxId = 0; // Track highest id so the generator can resume past it.
 
     const QJsonArray sources = json.value(QStringLiteral("sources")).toArray();
     for (const QJsonValue& value : sources) {
@@ -173,6 +180,7 @@ std::optional<Circuit> CircuitSerializer::fromJson(const QJsonObject& json, QStr
 
         const WireValidationResult validation = circuit.validateWire(from.value(), to.value());
         if (validation != WireValidationResult::Ok) {
+            // Reuse the same messages the UI shows for manual wiring mistakes.
             error = QString::fromUtf8(wireValidationMessage(validation));
             return std::nullopt;
         }
@@ -183,7 +191,7 @@ std::optional<Circuit> CircuitSerializer::fromJson(const QJsonObject& json, QStr
         }
     }
 
-    seedComponentIdGenerator(maxId + 1);
+    seedComponentIdGenerator(maxId + 1); // Avoid colliding with restored component ids.
     return circuit;
 }
 
