@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeCatalog.cpp
+ * @brief Builds the static list of built-in challenge levels and truth tables.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/challenge/ChallengeCatalog.h"
 #include "digitallogic/challenge/ChallengeLevel.h"
 
@@ -5,6 +11,7 @@ namespace digitallogic {
 
 namespace {
 
+// Full 2-input AND truth table used by several levels.
 QVector<ChallengeTestCase> twoInputAndCases()
 {
     return {
@@ -153,6 +160,7 @@ QVector<ChallengeLevel> makeLevels()
 
 const QVector<ChallengeLevel>& ChallengeCatalog::levels()
 {
+    // Built once on first call; subsequent calls reuse the same immutable catalog.
     static const QVector<ChallengeLevel> kLevels = makeLevels();
     return kLevels;
 }
