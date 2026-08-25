@@ -1,3 +1,9 @@
+/**
+ * @file GatePaletteWidget.h
+ * @brief Declares the bottom palette of draggable gate templates.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/Gate.h"
@@ -18,6 +24,7 @@ public:
     explicit GatePaletteWidget(QWidget* parent = nullptr);
 
     void setChallengeMode(bool enabled);
+    // Remaining counts per GateKind; buttons disable when a budget hits zero.
     void updateGateBudget(const QHash<GateKind, int>& remaining);
 
 signals:
