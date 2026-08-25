@@ -1,9 +1,15 @@
+/**
+ * @file NotGate.cpp
+ * @brief Implements NOT-gate (inverter) evaluation.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/gates/NotGate.h"
 
 namespace digitallogic {
 
 NotGate::NotGate(const ComponentId id)
-    : Gate(id, GateKind::Not, 1)
+    : Gate(id, GateKind::Not, 1) // Single-input inverter
 {
 }
 
@@ -13,6 +19,7 @@ SignalValue NotGate::evaluate(const QVector<SignalValue>& inputs) const
         return SignalValue::Unknown;
     }
 
+    // Invert the first (and only) pin value.
     switch (inputs.front()) {
     case SignalValue::True:
         return SignalValue::False;
