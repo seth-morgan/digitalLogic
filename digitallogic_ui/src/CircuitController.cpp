@@ -1,3 +1,9 @@
+/**
+ * @file CircuitController.cpp
+ * @brief Owns the circuit model and syncs graphics for sources, gates, wires, targets, and challenges.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/CircuitController.h"
 
 #include "digitallogic/model/PinIndices.h"
@@ -26,6 +32,7 @@ namespace {
 
 constexpr qreal kPinHitRadius = 14.0;
 
+// Recursively gather PinGraphicsItem children (pins live under source/gate/target groups).
 void collectPins(QGraphicsItem* item, QVector<PinGraphicsItem*>& pins)
 {
     if (item == nullptr) {
@@ -83,6 +90,7 @@ void CircuitController::loadChallengeLevel(const ChallengeLevel& level, QHash<QS
     m_challengeSourceIdsByLabel.clear();
     outSourceIdsByLabel.clear();
 
+    // Challenge sources are locked in place; labels map to truth-table columns.
     for (const ChallengeSourceSpec& sourceSpec : level.sources) {
         const ComponentId sourceId = m_circuit.addSource(sourceSpec.position, SignalValue::False);
         m_challengeSourceIdsByLabel.insert(sourceSpec.label, sourceId);
@@ -112,6 +120,7 @@ void CircuitController::clearChallengeGateBudget()
     emit gateBudgetChanged();
 }
 
+// Challenge sources and the OUT target cannot be deleted by the player.
 bool CircuitController::isProtectedComponent(const ComponentId id) const
 {
     if (!m_challengeMode) {
@@ -172,6 +181,7 @@ void CircuitController::endWireDrag(const QPointF& scenePos)
         return;
     }
 
+    // Drop must land on a gate input or challenge target input pin.
     PinGraphicsItem* targetPin = findPinAtScenePos(scenePos);
     if (targetPin != nullptr && m_wireDragFromPin != nullptr && targetPin != m_wireDragFromPin) {
         if (targetPin->role() == PinGraphicsItem::PinRole::GateInput
@@ -237,6 +247,7 @@ void CircuitController::updateAllWirePaths()
         }
     }
 
+    // Keep the rubber-band preview anchored to the source pin while dragging.
     if (m_wireDragInProgress && m_wirePreviewLine != nullptr && m_wireDragFromPin != nullptr) {
         const QLineF line = m_wirePreviewLine->line();
         m_wirePreviewLine->setLine(QLineF(m_wireDragFromPin->sceneCenter(), line.p2()));
@@ -342,6 +353,7 @@ void CircuitController::deleteSelection()
                 continue;
             }
             if (m_circuit.removeGate(gateItem->componentId())) {
+                // Refund the gate to the challenge budget when deleted.
                 if (m_challengeMode) {
                     const GateKind kind = gateItem->kind();
                     if (m_challengeGateBudget.contains(kind)) {
@@ -380,6 +392,7 @@ void CircuitController::removeGateItem(GateGraphicsItem* gateItem)
         return;
     }
 
+    // Removing a gate also removes any wires attached to its pins.
     QVector<WireGraphicsItem*> wiresToRemove;
     for (WireGraphicsItem* wireItem : m_wireItems) {
         if (wireItem == nullptr) {
@@ -422,6 +435,7 @@ void CircuitController::clearCanvas()
         removeWireItem(m_wireItems.front());
     }
 
+    // In challenge mode, sources/target stay; only gates and wires are cleared.
     m_circuit.clearGatesAndWires(m_challengeMode);
 
     for (const SourceNode& source : m_circuit.sources()) {
@@ -541,6 +555,7 @@ void CircuitController::rebuildGraphics()
     }
 }
 
+// Prefer the closest pin within kPinHitRadius for forgiving wire drop targeting.
 PinGraphicsItem* CircuitController::findPinAtScenePos(const QPointF& scenePos) const
 {
     if (m_view == nullptr || m_view->scene() == nullptr) {
@@ -641,6 +656,7 @@ void CircuitController::applySimulationResults(const QHash<PinId, SignalValue>& 
             continue;
         }
 
+        // Wire color follows the driving (from) pin's resolved value.
         const auto fromIt = pinValues.find(wireItem->fromPinId());
         if (fromIt != pinValues.end()) {
             wireItem->setSignalValue(fromIt.value(), true);
