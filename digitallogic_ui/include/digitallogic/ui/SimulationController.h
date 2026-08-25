@@ -1,3 +1,9 @@
+/**
+ * @file SimulationController.h
+ * @brief Declares the UI controller that runs simulation and paints pin results.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/PinId.h"
@@ -29,6 +35,7 @@ signals:
 
 private:
     CircuitController* m_circuitController;
+    // Cached so reset can clear the last painted pin colors.
     QHash<PinId, SignalValue> m_lastResults;
 };
 
