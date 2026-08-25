@@ -1,3 +1,9 @@
+/**
+ * @file ComponentIdFactory.h
+ * @brief Declares helpers that allocate and reseeds unique ComponentId values.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/ComponentId.h"
