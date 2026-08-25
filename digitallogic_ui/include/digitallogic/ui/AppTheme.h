@@ -1,3 +1,9 @@
+/**
+ * @file AppTheme.h
+ * @brief Declares centralized dark-theme colors and widget stylesheets for the UI.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/Gate.h"
@@ -25,7 +31,9 @@ struct AppTheme final {
     static QColor signalTrue();
     static QColor signalFalse();
 
+    // Global QSS applied once at application startup.
     [[nodiscard]] static QString applicationStylesheet();
+    // Per-gate palette button colors keyed by GateKind.
     [[nodiscard]] static QString gateButtonStylesheet(GateKind kind);
     [[nodiscard]] static QString toolbarButtonStylesheet();
     [[nodiscard]] static QString primaryActionStylesheet();
