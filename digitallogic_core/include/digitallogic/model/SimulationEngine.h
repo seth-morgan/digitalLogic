@@ -1,3 +1,9 @@
+/**
+ * @file SimulationEngine.h
+ * @brief Declares the topological circuit evaluator and pin-level results.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/Circuit.h"
@@ -29,6 +35,7 @@ public:
      * @param sourceOverrides Optional per-source values used instead of stored source values.
      * @return Resolved pin values when successful.
      */
+    // sourceOverrides lets challenge validation test truth tables without mutating the circuit.
     [[nodiscard]] static std::optional<QVector<PinSignal>> run(
         const Circuit& circuit, const QHash<ComponentId, SignalValue>* sourceOverrides = nullptr);
 
