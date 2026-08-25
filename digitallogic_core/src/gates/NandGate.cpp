@@ -1,9 +1,15 @@
+/**
+ * @file NandGate.cpp
+ * @brief Implements NAND-gate evaluation for the digital logic simulator.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/gates/NandGate.h"
 
 namespace digitallogic {
 
 NandGate::NandGate(const ComponentId id)
-    : Gate(id, GateKind::Nand, 2)
+    : Gate(id, GateKind::Nand, 2) // Two-input NAND by default
 {
 }
 
@@ -14,14 +20,17 @@ SignalValue NandGate::evaluate(const QVector<SignalValue>& inputs) const
     }
 
     for (const SignalValue input : inputs) {
+        // Unknown must be checked first so it is not mistaken for False.
         if (input == SignalValue::Unknown) {
             return SignalValue::Unknown;
         }
+        // Any false input makes NAND output true (De Morgan / inverted AND).
         if (input == SignalValue::False) {
             return SignalValue::True;
         }
     }
 
+    // All inputs were True, so NAND yields False.
     return SignalValue::False;
 }
 
