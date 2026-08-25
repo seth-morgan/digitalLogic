@@ -1,3 +1,9 @@
+/**
+ * @file SandboxView.cpp
+ * @brief Graphics view for the circuit canvas: wire drag, gate drop, grid, and keyboard delete.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/SandboxView.h"
 
 #include "digitallogic/model/Gate.h"
@@ -35,6 +41,7 @@ SandboxView::SandboxView(QWidget* parent)
     setFrameShape(QFrame::NoFrame);
     setBackgroundBrush(AppTheme::background());
 
+    // ~30 FPS tick drives WireGraphicsItem::advance for animated signal flow.
     auto* animationTimer = new QTimer(this);
     connect(animationTimer, &QTimer::timeout, scene, &QGraphicsScene::advance);
     animationTimer->start(33);
@@ -43,6 +50,7 @@ SandboxView::SandboxView(QWidget* parent)
     m_circuitController->initializeDefaultSources();
 }
 
+// Wire creation starts only from source or gate output pins.
 bool SandboxView::tryBeginWireAt(const QPointF& scenePos)
 {
     PinGraphicsItem* pin = m_circuitController->findPinAtScenePos(scenePos);
@@ -127,6 +135,7 @@ void SandboxView::dropEvent(QDropEvent* event)
         return;
     }
 
+    // Palette encodes GateKind as a single byte in the custom MIME payload.
     const QByteArray payload = event->mimeData()->data(QString::fromLatin1(kGateMimeType));
     const GateKind kind = static_cast<GateKind>(payload.at(0));
     const QPointF scenePos = mapToScene(event->position().toPoint());
@@ -144,6 +153,7 @@ void SandboxView::drawBackground(QPainter* painter, const QRectF& rect)
     gridPen.setWidth(1);
     painter->setPen(gridPen);
 
+    // Align grid lines to a 20px lattice clipped to the exposed rect.
     constexpr qreal gridStep = 20.0;
     const qreal left = std::floor(rect.left() / gridStep) * gridStep;
     const qreal top = std::floor(rect.top() / gridStep) * gridStep;
