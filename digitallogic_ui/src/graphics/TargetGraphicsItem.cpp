@@ -1,3 +1,9 @@
+/**
+ * @file TargetGraphicsItem.cpp
+ * @brief Fixed challenge OUT target with input pin and simulated value display.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/graphics/TargetGraphicsItem.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -33,6 +39,7 @@ TargetGraphicsItem::TargetGraphicsItem(const ComponentId componentId, CircuitCon
                                      controller, this);
     m_inputPin->setPos(-8.0, 25.0);
 
+    // Targets are placement-locked; only challenge setup positions them.
     setFlag(QGraphicsItem::ItemIsSelectable, false);
     setFlag(QGraphicsItem::ItemIsMovable, false);
 }
