@@ -1,3 +1,9 @@
+/**
+ * @file TargetGraphicsItem.h
+ * @brief Declares the graphics item for a challenge output target.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/ComponentId.h"
