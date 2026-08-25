@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeDialog.h
+ * @brief Declares the dialog used to pick a challenge level.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include <QDialog>
@@ -15,6 +21,7 @@ class ChallengeDialog final : public QDialog {
 public:
     explicit ChallengeDialog(QWidget* parent = nullptr);
 
+    // -1 until the user accepts a selection from the list.
     [[nodiscard]] int selectedLevelIndex() const noexcept { return m_selectedLevelIndex; }
 
 private:
