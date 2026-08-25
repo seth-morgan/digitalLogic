@@ -1,3 +1,9 @@
+/**
+ * @file ChallengePanelWidget.cpp
+ * @brief Top banner showing challenge title, description, and check/next/exit actions.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/ChallengePanelWidget.h"
 
 #include "digitallogic/model/Gate.h"
@@ -35,6 +41,7 @@ ChallengePanelWidget::ChallengePanelWidget(QWidget* parent)
     m_checkButton->setStyleSheet(AppTheme::primaryActionStylesheet());
     m_nextLevelButton->setStyleSheet(AppTheme::gateButtonStylesheet(GateKind::Xor));
     m_exitButton->setStyleSheet(AppTheme::toolbarButtonStylesheet());
+    // Next Level stays hidden/disabled until the current level is solved.
     m_nextLevelButton->setVisible(false);
     m_nextLevelButton->setEnabled(false);
 
