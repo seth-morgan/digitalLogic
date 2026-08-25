@@ -1,3 +1,9 @@
+/**
+ * @file CircuitSerializer.h
+ * @brief Declares JSON save/load helpers for Circuit (no UI types).
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/Circuit.h"
