@@ -1,3 +1,9 @@
+/**
+ * @file SourceNode.h
+ * @brief Declares a toggleable input source used as a circuit primary input.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/ComponentId.h"
