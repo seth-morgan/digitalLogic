@@ -1,3 +1,9 @@
+/**
+ * @file WinCelebrationOverlay.cpp
+ * @brief Full-area overlay that fades in a win banner and green flash on level complete.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/WinCelebrationOverlay.h"
 
 #include "digitallogic/ui/AppTheme.h"
@@ -15,6 +21,7 @@ namespace digitallogic::ui {
 WinCelebrationOverlay::WinCelebrationOverlay(QWidget* parent)
     : QWidget(parent)
 {
+    // Let clicks pass through so the canvas stays interactive during celebration.
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
     setVisible(false);
     setAutoFillBackground(false);
@@ -50,6 +57,7 @@ void WinCelebrationOverlay::play()
     fadeIn->setEasingCurve(QEasingCurve::OutBack);
     fadeIn->start(QAbstractAnimation::DeleteWhenStopped);
 
+    // Hold the banner briefly, then fade out and hide.
     QTimer::singleShot(1600, this, [this]() {
         auto* fadeOut = new QPropertyAnimation(m_opacityEffect, "opacity", this);
         fadeOut->setDuration(500);
@@ -59,6 +67,7 @@ void WinCelebrationOverlay::play()
         fadeOut->start(QAbstractAnimation::DeleteWhenStopped);
     });
 
+    // Decay the green flash overlay each tick until it reaches zero.
     auto* flashTimer = new QTimer(this);
     connect(flashTimer, &QTimer::timeout, this, [this, flashTimer]() {
         m_flashStrength = qMax(0.0, m_flashStrength - 0.08);
