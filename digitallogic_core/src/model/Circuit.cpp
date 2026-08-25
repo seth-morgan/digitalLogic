@@ -1,3 +1,9 @@
+/**
+ * @file Circuit.cpp
+ * @brief Implements circuit mutation, lookup, and wire-validation helpers.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/Circuit.h"
 
 #include "digitallogic/model/PinIndices.h"
@@ -10,7 +16,7 @@ ComponentId Circuit::addSource(const QPointF& position, const SignalValue initia
 {
     const ComponentId id = makeComponentId();
     m_sources.emplace_back(id, initialValue);
-    m_placements.insert(id, ComponentPlacement{id, position});
+    m_placements.insert(id, ComponentPlacement{id, position}); // Track canvas position in the model
     return id;
 }
 
@@ -54,6 +60,7 @@ std::optional<ComponentId> Circuit::addGate(const GateKind kind, const QPointF& 
 
 WireValidationResult Circuit::validateWire(const PinId& from, const PinId& to) const
 {
+    // Reject self-loops even if the pin roles would otherwise be valid.
     if (from.componentId == to.componentId) {
         return WireValidationResult::SameComponent;
     }
@@ -64,6 +71,7 @@ WireValidationResult Circuit::validateWire(const PinId& from, const PinId& to) c
         return WireValidationResult::InvalidDestination;
     }
 
+    // Destination must be a gate input index or the challenge target's single input.
     if (destinationGate != nullptr) {
         if (to.pinIndex < 0 || to.pinIndex >= destinationGate->inputCount()) {
             return WireValidationResult::InvalidDestination;
@@ -78,6 +86,7 @@ WireValidationResult Circuit::validateWire(const PinId& from, const PinId& to) c
         return WireValidationResult::InvalidSource;
     }
 
+    // Gate outputs use pin index == inputCount; inputs must not be used as sources.
     if (fromGate != nullptr && !isGateOutputPin(from.pinIndex, fromGate->inputCount())) {
         return WireValidationResult::InvalidSource;
     }
@@ -86,6 +95,7 @@ WireValidationResult Circuit::validateWire(const PinId& from, const PinId& to) c
         return WireValidationResult::InvalidSource;
     }
 
+    // Each input pin accepts at most one incoming wire.
     for (const Wire& existing : m_wires) {
         if (existing.to == to) {
             return WireValidationResult::InputAlreadyConnected;
@@ -115,6 +125,7 @@ bool Circuit::removeGate(const ComponentId id)
         return false;
     }
 
+    // Erase-remove: drop every wire that touches the deleted gate.
     m_wires.erase(std::remove_if(m_wires.begin(), m_wires.end(),
                                  [id](const Wire& wire) {
                                      return wire.from.componentId == id || wire.to.componentId == id;
@@ -237,6 +248,7 @@ void Circuit::clearGatesAndWires(const bool keepTargets)
     m_gates.clear();
     m_wires.clear();
 
+    // Keep source (and optionally target) placements so the canvas layout survives Clear.
     QHash<ComponentId, ComponentPlacement> preservedPlacements;
     for (const SourceNode& source : m_sources) {
         const auto placementIt = m_placements.find(source.id());
