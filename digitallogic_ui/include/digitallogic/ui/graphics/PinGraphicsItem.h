@@ -1,3 +1,9 @@
+/**
+ * @file PinGraphicsItem.h
+ * @brief Declares the clickable connection pin graphics item for the sandbox.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/PinId.h"
@@ -15,6 +21,7 @@ class CircuitController;
  */
 class PinGraphicsItem final : public QGraphicsEllipseItem {
 public:
+    // Distinguishes valid wire endpoints (output -> input) during drag.
     enum class PinRole {
         SourceOutput,
         GateInput,
@@ -29,6 +36,7 @@ public:
     [[nodiscard]] QPointF sceneCenter() const;
 
     void setSignalValue(SignalValue value, bool simulated);
+    // Highlight while this pin is the start of an in-progress wire drag.
     void setPendingWire(bool pending);
 
 private:
