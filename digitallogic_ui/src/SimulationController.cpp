@@ -1,3 +1,9 @@
+/**
+ * @file SimulationController.cpp
+ * @brief Runs the simulation engine and applies results to the circuit canvas.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/SimulationController.h"
 
 #include "digitallogic/ui/CircuitController.h"
@@ -17,6 +23,7 @@ void SimulationController::runSimulation()
     }
 
     const std::optional<QVector<PinSignal>> results = SimulationEngine::run(m_circuitController->circuit());
+    // Engine returns nullopt when the graph contains a cycle.
     if (!results.has_value()) {
         emit statusMessage(QStringLiteral("Cannot simulate: cycle detected in the circuit."));
         return;
