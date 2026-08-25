@@ -8,11 +8,17 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Constructs a two-input NAND gate with the given component id.
+ */
 NandGate::NandGate(const ComponentId id)
     : Gate(id, GateKind::Nand, 2) // Two-input NAND by default
 {
 }
 
+/**
+ * @brief Returns False only if every input is True; True when any input is False.
+ */
 SignalValue NandGate::evaluate(const QVector<SignalValue>& inputs) const
 {
     if (inputs.size() < 2) {
