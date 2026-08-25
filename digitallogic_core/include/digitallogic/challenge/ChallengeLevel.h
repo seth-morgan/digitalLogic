@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeLevel.h
+ * @brief Data structures that describe a single challenge puzzle.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/Gate.h"
