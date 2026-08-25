@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeController.h
+ * @brief Declares orchestration of challenge mode, validation, and level flow.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include <QObject>
@@ -27,6 +33,7 @@ public:
                         WinCelebrationOverlay* winOverlay, QObject* parent = nullptr);
 
     void openLevelPicker();
+    // Active when a level index is set (challenge mode entered).
     [[nodiscard]] bool isActive() const noexcept { return m_currentLevelIndex.has_value(); }
 
 public slots:
