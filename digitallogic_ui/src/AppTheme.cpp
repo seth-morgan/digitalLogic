@@ -1,3 +1,9 @@
+/**
+ * @file AppTheme.cpp
+ * @brief Central color palette and Qt stylesheets for the Digital Logic UI.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/AppTheme.h"
 
 namespace digitallogic::ui {
@@ -67,6 +73,7 @@ QColor AppTheme::signalFalse()
     return QColor(QStringLiteral("#ef4444"));
 }
 
+// Distinct accent per gate type so palette buttons and UI accents stay recognizable.
 QColor AppTheme::gateAccent(const GateKind kind)
 {
     switch (kind) {
@@ -99,6 +106,7 @@ QString AppTheme::applicationStylesheet()
         "QDialogButtonBox QPushButton { min-height: 32px; padding: 6px 16px; border-radius: 8px; }");
 }
 
+// Border-bottom + hover margin creates a pressed "physical button" look.
 QString AppTheme::toolbarButtonStylesheet()
 {
     return QStringLiteral(
