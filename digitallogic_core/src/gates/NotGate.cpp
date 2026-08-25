@@ -8,11 +8,17 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Constructs a single-input NOT gate with the given component id.
+ */
 NotGate::NotGate(const ComponentId id)
     : Gate(id, GateKind::Not, 1) // Single-input inverter
 {
 }
 
+/**
+ * @brief Inverts the first input; returns Unknown when the input list is empty.
+ */
 SignalValue NotGate::evaluate(const QVector<SignalValue>& inputs) const
 {
     if (inputs.isEmpty()) {
