@@ -16,9 +16,14 @@ namespace digitallogic {
  */
 class NandGate final : public Gate {
 public:
+    /**
+     * @brief Constructs a two-input NAND gate with the given component id.
+     */
     explicit NandGate(ComponentId id);
 
-    // Returns False only if every input is True; True when any input is False.
+    /**
+     * @brief Returns False only if every input is True; True when any input is False.
+     */
     [[nodiscard]] SignalValue evaluate(const QVector<SignalValue>& inputs) const override;
 };
 
