@@ -1,3 +1,9 @@
+/**
+ * @file Gate.h
+ * @brief Declares GateKind and the abstract Gate base class for all logic gates.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #pragma once
 
 #include "digitallogic/model/ComponentId.h"
@@ -37,6 +43,7 @@ public:
     [[nodiscard]] virtual SignalValue evaluate(const QVector<SignalValue>& inputs) const = 0;
 
 protected:
+    // Concrete gates call this to register id, kind, and pin arity.
     Gate(ComponentId id, GateKind kind, int inputCount);
 
 private:
