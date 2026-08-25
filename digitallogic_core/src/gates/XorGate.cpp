@@ -8,11 +8,17 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Constructs a two-input XOR gate with the given component id.
+ */
 XorGate::XorGate(const ComponentId id)
     : Gate(id, GateKind::Xor, 2) // Exactly two inputs for XOR
 {
 }
 
+/**
+ * @brief Returns True when the two inputs differ; False when they match.
+ */
 SignalValue XorGate::evaluate(const QVector<SignalValue>& inputs) const
 {
     if (inputs.size() < 2) {
