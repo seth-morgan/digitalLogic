@@ -16,9 +16,14 @@ namespace digitallogic {
  */
 class XorGate final : public Gate {
 public:
+    /**
+     * @brief Constructs a two-input XOR gate with the given component id.
+     */
     explicit XorGate(ComponentId id);
 
-    // Returns True when the two inputs differ; False when they match.
+    /**
+     * @brief Returns True when the two inputs differ; False when they match.
+     */
     [[nodiscard]] SignalValue evaluate(const QVector<SignalValue>& inputs) const override;
 };
 
