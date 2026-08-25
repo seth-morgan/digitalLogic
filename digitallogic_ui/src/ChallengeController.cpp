@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeController.cpp
+ * @brief Orchestrates challenge mode: level load, budget, validation, and return to sandbox.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/ui/ChallengeController.h"
 
 #include "digitallogic/challenge/ChallengeCatalog.h"
@@ -55,6 +61,7 @@ void ChallengeController::startLevel(const int index)
     m_currentLevelIndex = index;
     m_levelSolved = false;
 
+    // Load places fixed sources/target; budget limits which gates the player may add.
     QHash<QString, ComponentId> sourceIdsByLabel;
     ComponentId targetId;
     m_circuitController->loadChallengeLevel(*level, sourceIdsByLabel, targetId);
@@ -112,6 +119,7 @@ void ChallengeController::checkSolution()
         return;
     }
 
+    // Run sim first so the canvas reflects current pin values before validation messaging.
     if (m_simulationController != nullptr) {
         m_simulationController->runSimulation();
     }
