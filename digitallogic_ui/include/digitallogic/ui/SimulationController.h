@@ -24,10 +24,19 @@ class SimulationController final : public QObject {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructs a simulation controller for the given circuit controller.
+     */
     explicit SimulationController(CircuitController* circuitController, QObject* parent = nullptr);
 
 public slots:
+    /**
+     * @brief Runs the simulation engine and paints resulting pin values.
+     */
     void runSimulation();
+    /**
+     * @brief Clears the last simulation results from the sandbox visuals.
+     */
     void resetSimulation();
 
 signals:
