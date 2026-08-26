@@ -20,15 +20,30 @@ class WinCelebrationOverlay final : public QWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructs the full-window win celebration overlay.
+     */
     explicit WinCelebrationOverlay(QWidget* parent = nullptr);
 
+    /**
+     * @brief Plays the celebration flash and banner animation.
+     */
     void play();
 
 protected:
+    /**
+     * @brief Keeps overlay children sized to the parent window.
+     */
     void resizeEvent(QResizeEvent* event) override;
+    /**
+     * @brief Paints the full-window color flash during celebration.
+     */
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    /**
+     * @brief Hides the overlay and resets celebration state when finished.
+     */
     void finishCelebration();
 
     QLabel* m_banner{nullptr};
