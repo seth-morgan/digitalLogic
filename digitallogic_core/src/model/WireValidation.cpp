@@ -8,6 +8,9 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Human-readable description of a wire validation result.
+ */
 const char* wireValidationMessage(const WireValidationResult result)
 {
     switch (result) {
