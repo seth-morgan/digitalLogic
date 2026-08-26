@@ -21,6 +21,9 @@ namespace {
 constexpr const char* kGateMimeType = "application/x-digitallogic-gate";
 }
 
+/**
+ * @brief Constructs the gate palette and its draggable gate buttons.
+ */
 GatePaletteWidget::GatePaletteWidget(QWidget* parent)
     : QWidget(parent)
 {
@@ -53,6 +56,9 @@ GatePaletteWidget::GatePaletteWidget(QWidget* parent)
     setStyleSheet(QStringLiteral("background-color: #1c212b; border-top: 1px solid #2a3140;"));
 }
 
+/**
+ * @brief Enables or disables challenge-mode budget constraints on the palette.
+ */
 void GatePaletteWidget::setChallengeMode(const bool enabled)
 {
     m_challengeMode = enabled;
@@ -62,12 +68,18 @@ void GatePaletteWidget::setChallengeMode(const bool enabled)
     refreshAllButtons();
 }
 
+/**
+ * @brief Updates remaining gate counts and disables exhausted buttons.
+ */
 void GatePaletteWidget::updateGateBudget(const QHash<GateKind, int>& remaining)
 {
     m_gateBudget = remaining;
     refreshAllButtons();
 }
 
+/**
+ * @brief Refreshes enabled state and label for one palette button.
+ */
 void GatePaletteWidget::refreshButtonState(GateButtonEntry& entry)
 {
     if (entry.button == nullptr) {
@@ -87,6 +99,9 @@ void GatePaletteWidget::refreshButtonState(GateButtonEntry& entry)
     entry.button->setEnabled(m_gateBudget.value(entry.kind) > 0);
 }
 
+/**
+ * @brief Refreshes enabled state for every palette button.
+ */
 void GatePaletteWidget::refreshAllButtons()
 {
     for (GateButtonEntry& entry : m_gateButtons) {
@@ -94,6 +109,9 @@ void GatePaletteWidget::refreshAllButtons()
     }
 }
 
+/**
+ * @brief Finds the palette entry whose button matches the watched object.
+ */
 GatePaletteWidget::GateButtonEntry* GatePaletteWidget::findEntry(QObject* watched)
 {
     for (GateButtonEntry& entry : m_gateButtons) {
@@ -104,6 +122,9 @@ GatePaletteWidget::GateButtonEntry* GatePaletteWidget::findEntry(QObject* watche
     return nullptr;
 }
 
+/**
+ * @brief Intercepts button press events to start a gate drag.
+ */
 bool GatePaletteWidget::eventFilter(QObject* watched, QEvent* event)
 {
     if (event->type() != QEvent::MouseButtonPress) {
@@ -124,6 +145,9 @@ bool GatePaletteWidget::eventFilter(QObject* watched, QEvent* event)
     return true;
 }
 
+/**
+ * @brief Begins a drag-and-drop operation for the given gate kind.
+ */
 void GatePaletteWidget::startGateDrag(const GateKind kind, QWidget* sourceWidget)
 {
     auto* mimeData = new QMimeData();
