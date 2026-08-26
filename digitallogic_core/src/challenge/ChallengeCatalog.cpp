@@ -11,7 +11,9 @@ namespace digitallogic {
 
 namespace {
 
-// Full 2-input AND truth table used by several levels.
+/**
+ * @brief Builds the full 2-input AND truth table used by several levels.
+ */
 QVector<ChallengeTestCase> twoInputAndCases()
 {
     return {
@@ -22,6 +24,9 @@ QVector<ChallengeTestCase> twoInputAndCases()
     };
 }
 
+/**
+ * @brief Builds the full 2-input OR truth table.
+ */
 QVector<ChallengeTestCase> twoInputOrCases()
 {
     return {
@@ -32,6 +37,9 @@ QVector<ChallengeTestCase> twoInputOrCases()
     };
 }
 
+/**
+ * @brief Builds the full 2-input XOR truth table.
+ */
 QVector<ChallengeTestCase> twoInputXorCases()
 {
     return {
@@ -42,6 +50,9 @@ QVector<ChallengeTestCase> twoInputXorCases()
     };
 }
 
+/**
+ * @brief Builds the single-input NOT truth table.
+ */
 QVector<ChallengeTestCase> singleInputNotCases()
 {
     return {
@@ -50,6 +61,9 @@ QVector<ChallengeTestCase> singleInputNotCases()
     };
 }
 
+/**
+ * @brief Returns the default two-source (A/B) layout for challenge levels.
+ */
 QVector<ChallengeSourceSpec> twoSources()
 {
     return {
@@ -58,6 +72,9 @@ QVector<ChallengeSourceSpec> twoSources()
     };
 }
 
+/**
+ * @brief Constructs the built-in challenge level definitions.
+ */
 QVector<ChallengeLevel> makeLevels()
 {
     QVector<ChallengeLevel> levels;
@@ -158,6 +175,9 @@ QVector<ChallengeLevel> makeLevels()
 
 } // namespace
 
+/**
+ * @brief Returns the full list of built-in challenge levels.
+ */
 const QVector<ChallengeLevel>& ChallengeCatalog::levels()
 {
     // Built once on first call; subsequent calls reuse the same immutable catalog.
@@ -165,11 +185,17 @@ const QVector<ChallengeLevel>& ChallengeCatalog::levels()
     return kLevels;
 }
 
+/**
+ * @brief Returns how many challenge levels are in the catalog.
+ */
 int ChallengeCatalog::levelCount() noexcept
 {
     return levels().size();
 }
 
+/**
+ * @brief Returns the challenge level at the given index, or nullptr if out of range.
+ */
 const ChallengeLevel* ChallengeCatalog::levelAt(const int index)
 {
     const QVector<ChallengeLevel>& all = levels();
