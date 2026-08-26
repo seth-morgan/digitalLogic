@@ -13,6 +13,9 @@ namespace digitallogic {
 
 namespace {
 
+/**
+ * @brief Counts how many gates of each kind are present in the circuit.
+ */
 [[nodiscard]] QHash<GateKind, int> countGatesByKind(const Circuit& circuit)
 {
     QHash<GateKind, int> counts;
@@ -22,7 +25,9 @@ namespace {
     return counts;
 }
 
-// True when the challenge OUT target has at least one incoming wire.
+/**
+ * @brief Returns true when the challenge OUT target has at least one incoming wire.
+ */
 [[nodiscard]] bool targetHasInputWire(const Circuit& circuit, const ComponentId targetId)
 {
     const PinId targetInput{targetId, targetInputPinIndex()};
@@ -34,6 +39,9 @@ namespace {
     return false;
 }
 
+/**
+ * @brief Reads the resolved signal driving the challenge target input pin.
+ */
 [[nodiscard]] SignalValue readTargetInputValue(const Circuit& circuit, const ComponentId targetId,
                                                const QHash<PinId, SignalValue>& resolved)
 {
@@ -56,6 +64,9 @@ namespace {
     return SignalValue::Unknown;
 }
 
+/**
+ * @brief Formats a signal value as a short UI-friendly string.
+ */
 [[nodiscard]] QString formatSignal(const SignalValue value)
 {
     return QString::fromUtf8(toString(value));
@@ -63,6 +74,9 @@ namespace {
 
 } // namespace
 
+/**
+ * @brief Validates gate usage, wiring, and truth-table expectations.
+ */
 ChallengeValidationResult ChallengeValidator::validate(const Circuit& circuit, const ChallengeLevel& level,
                                                        const QHash<QString, ComponentId>& sourceIdsByLabel,
                                                        const ComponentId targetId)
