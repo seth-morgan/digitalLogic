@@ -18,6 +18,9 @@ namespace {
 
 constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incompatibly.
 
+/**
+ * @brief Maps a GateKind enum value to its JSON string token.
+ */
 [[nodiscard]] QString gateKindToString(const GateKind kind)
 {
     switch (kind) {
@@ -36,6 +39,9 @@ constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incomp
     }
 }
 
+/**
+ * @brief Parses a GateKind from its JSON string token.
+ */
 [[nodiscard]] std::optional<GateKind> gateKindFromString(const QString& text)
 {
     if (text == QStringLiteral("and")) {
@@ -56,6 +62,9 @@ constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incomp
     return std::nullopt;
 }
 
+/**
+ * @brief Serializes a PinId to a JSON object.
+ */
 [[nodiscard]] QJsonObject pinToJson(const PinId& pin)
 {
     QJsonObject object;
@@ -64,6 +73,9 @@ constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incomp
     return object;
 }
 
+/**
+ * @brief Deserializes a PinId from a JSON object.
+ */
 [[nodiscard]] std::optional<PinId> pinFromJson(const QJsonObject& object)
 {
     if (!object.contains(QStringLiteral("componentId")) || !object.contains(QStringLiteral("pinIndex"))) {
@@ -76,6 +88,9 @@ constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incomp
     return pin;
 }
 
+/**
+ * @brief Converts a JSON integer to True (nonzero) or False.
+ */
 [[nodiscard]] SignalValue signalFromJson(const QJsonValue& value)
 {
     return value.toInt() != 0 ? SignalValue::True : SignalValue::False;
@@ -83,6 +98,9 @@ constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incomp
 
 } // namespace
 
+/**
+ * @brief Serializes a circuit to a JSON object.
+ */
 QJsonObject CircuitSerializer::toJson(const Circuit& circuit)
 {
     QJsonObject root;
@@ -124,6 +142,9 @@ QJsonObject CircuitSerializer::toJson(const Circuit& circuit)
     return root;
 }
 
+/**
+ * @brief Deserializes a circuit from JSON.
+ */
 std::optional<Circuit> CircuitSerializer::fromJson(const QJsonObject& json, QString& error)
 {
     // Reject files that lack a matching version field.
