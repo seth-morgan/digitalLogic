@@ -23,24 +23,57 @@ class PinGraphicsItem;
  */
 class GateGraphicsItem final : public QGraphicsItemGroup {
 public:
+    /**
+     * @brief Constructs a gate graphics item with the given kind and input count.
+     */
     GateGraphicsItem(ComponentId componentId, GateKind kind, int inputCount, CircuitController* controller,
                      QGraphicsItem* parent = nullptr);
 
+    /**
+     * @brief Returns the gate component id.
+     */
     [[nodiscard]] ComponentId componentId() const noexcept { return m_componentId; }
+    /**
+     * @brief Returns the gate kind.
+     */
     [[nodiscard]] GateKind kind() const noexcept { return m_kind; }
+    /**
+     * @brief Returns the output pin graphics item.
+     */
     [[nodiscard]] PinGraphicsItem* outputPin() const noexcept { return m_outputPin; }
+    /**
+     * @brief Returns the input pin graphics items.
+     */
     [[nodiscard]] QVector<PinGraphicsItem*> inputPins() const { return m_inputPins; }
 
+    /**
+     * @brief Updates the output pin appearance from a simulated signal value.
+     */
     void setOutputSignal(SignalValue value, bool simulated);
+    /**
+     * @brief Clears simulation highlight styling from the gate output.
+     */
     void clearSimulationHighlight();
+    /**
+     * @brief Recomputes attached wire endpoints after the gate is moved.
+     */
     // Recomputes attached wire endpoints after the gate is moved.
     void updateWirePaths();
 
 protected:
+    /**
+     * @brief Syncs model position and selection style when the item changes.
+     */
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
 private:
+    /**
+     * @brief Applies selected/deselected border styling to the gate body.
+     */
     void applySelectionStyle();
+    /**
+     * @brief Returns the short display label for a gate kind.
+     */
     [[nodiscard]] static QString gateLabel(GateKind kind);
 
     ComponentId m_componentId;
