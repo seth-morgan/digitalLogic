@@ -1,3 +1,9 @@
+/**
+ * @file SimulationEngineTests.cpp
+ * @brief Unit tests for end-to-end SimulationEngine circuit evaluation.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/Circuit.h"
 #include "digitallogic/model/PinIndices.h"
 #include "digitallogic/model/SimulationEngine.h"
@@ -14,6 +20,9 @@ private slots:
     void notGate_invertsConnectedSource();
 };
 
+/**
+ * @brief Builds a two-input AND circuit and checks pin values after simulation.
+ */
 void SimulationEngineTests::simpleAndCircuit_propagatesSourceValues()
 {
     Circuit circuit;
@@ -26,6 +35,7 @@ void SimulationEngineTests::simpleAndCircuit_propagatesSourceValues()
     const PinId sourceBOut{sourceB, sourceOutputPinIndex()};
     const PinId andInput0{andGateId.value(), gateInputPinIndex(0)};
     const PinId andInput1{andGateId.value(), gateInputPinIndex(1)};
+    // AND has two inputs; output pin index equals the input count (2).
     const PinId andOutput{andGateId.value(), gateOutputPinIndex(2)};
 
     QVERIFY(circuit.addWire(sourceAOut, andInput0));
@@ -34,6 +44,7 @@ void SimulationEngineTests::simpleAndCircuit_propagatesSourceValues()
     const std::optional<QVector<PinSignal>> results = SimulationEngine::run(circuit);
     QVERIFY(results.has_value());
 
+    // Flatten PinSignal list into a pin->value map for direct QCOMPARE lookups.
     QHash<PinId, SignalValue> values;
     for (const PinSignal& pinSignal : results.value()) {
         values.insert(pinSignal.pin, pinSignal.value);
@@ -41,9 +52,13 @@ void SimulationEngineTests::simpleAndCircuit_propagatesSourceValues()
 
     QCOMPARE(values.value(sourceAOut), SignalValue::True);
     QCOMPARE(values.value(sourceBOut), SignalValue::False);
+    // True AND False => False at the gate output.
     QCOMPARE(values.value(andOutput), SignalValue::False);
 }
 
+/**
+ * @brief Builds a NOT circuit and checks the inverted output after simulation.
+ */
 void SimulationEngineTests::notGate_invertsConnectedSource()
 {
     Circuit circuit;
@@ -53,6 +68,7 @@ void SimulationEngineTests::notGate_invertsConnectedSource()
 
     const PinId sourceOut{source, sourceOutputPinIndex()};
     const PinId notInput{notGateId.value(), gateInputPinIndex(0)};
+    // NOT has one input; output pin index is 1.
     const PinId notOutput{notGateId.value(), gateOutputPinIndex(1)};
 
     QVERIFY(circuit.addWire(sourceOut, notInput));
