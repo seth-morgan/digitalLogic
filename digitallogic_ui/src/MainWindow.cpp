@@ -26,6 +26,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs the main window and builds the sandbox UI.
+ */
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
 {
@@ -35,6 +38,9 @@ MainWindow::MainWindow(QWidget* parent)
     resize(1280, 800);
 }
 
+/**
+ * @brief Builds the central layout, sandbox, palette, and challenge panel.
+ */
 void MainWindow::setupUi()
 {
     auto* central = new QWidget(this);
@@ -72,6 +78,9 @@ void MainWindow::setupUi()
             [this](const bool challengeActive) { setSandboxActionsEnabled(!challengeActive); });
 }
 
+/**
+ * @brief Creates toolbar actions for save, open, clear, simulate, and challenges.
+ */
 void MainWindow::setupToolbar()
 {
     auto* toolbar = addToolBar(QStringLiteral("Simulation"));
@@ -99,6 +108,9 @@ void MainWindow::setupToolbar()
     connect(m_openAction, &QAction::triggered, this, &MainWindow::openCircuit);
 }
 
+/**
+ * @brief Saves the current circuit to a user-selected file.
+ */
 void MainWindow::saveCircuit()
 {
     const QString path = QFileDialog::getSaveFileName(this, QStringLiteral("Save Circuit"), QString(),
@@ -110,6 +122,9 @@ void MainWindow::saveCircuit()
     (void)m_sandboxView->circuitController()->saveToFile(path);
 }
 
+/**
+ * @brief Opens a circuit from a user-selected file.
+ */
 void MainWindow::openCircuit()
 {
     const QString path = QFileDialog::getOpenFileName(this, QStringLiteral("Open Circuit"), QString(),
@@ -121,6 +136,9 @@ void MainWindow::openCircuit()
     (void)m_sandboxView->circuitController()->loadFromFile(path);
 }
 
+/**
+ * @brief Opens the challenge level picker and enters challenge mode.
+ */
 void MainWindow::openChallengeMode()
 {
     if (m_challengeController != nullptr) {
@@ -129,6 +147,9 @@ void MainWindow::openChallengeMode()
 }
 
 // Save/Open are sandbox-only; challenge levels own the circuit layout.
+/**
+ * @brief Enables or disables sandbox file actions during challenge mode.
+ */
 void MainWindow::setSandboxActionsEnabled(const bool enabled)
 {
     const bool sandboxEnabled = enabled;
@@ -140,6 +161,9 @@ void MainWindow::setSandboxActionsEnabled(const bool enabled)
     }
 }
 
+/**
+ * @brief Keeps the win celebration overlay sized to the window.
+ */
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     QMainWindow::resizeEvent(event);
@@ -149,6 +173,9 @@ void MainWindow::resizeEvent(QResizeEvent* event)
     }
 }
 
+/**
+ * @brief Shows a short status message in the window status area.
+ */
 void MainWindow::showStatusMessage(const QString& message)
 {
     if (m_statusLabel != nullptr) {
