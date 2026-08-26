@@ -19,7 +19,10 @@ private slots:
 void CircuitTests::validateWire_rejectsSameComponent()
 {
     Circuit circuit;
-    const ComponentId gateId = circuit.addGate(GateKind::And, QPointF(0.0, 0.0)).value();
+    const std::optional<ComponentId> gateIdOpt = circuit.addGate(GateKind::And, QPointF(0.0, 0.0));
+    QVERIFY(gateIdOpt.has_value());
+    const ComponentId gateId = gateIdOpt.value();
+    // Cannot wire a gate output back to an input on the same component.
     const PinId output{gateId, gateOutputPinIndex(2)};
     const PinId input{gateId, gateInputPinIndex(0)};
 
@@ -30,7 +33,9 @@ void CircuitTests::validateWire_rejectsDuplicateInput()
 {
     Circuit circuit;
     const ComponentId source = circuit.addSource(QPointF(0.0, 0.0), SignalValue::True);
-    const ComponentId gateId = circuit.addGate(GateKind::And, QPointF(100.0, 0.0)).value();
+    const std::optional<ComponentId> gateIdOpt = circuit.addGate(GateKind::And, QPointF(100.0, 0.0));
+    QVERIFY(gateIdOpt.has_value());
+    const ComponentId gateId = gateIdOpt.value();
 
     const PinId sourceOut{source, sourceOutputPinIndex()};
     const PinId gateInput{gateId, gateInputPinIndex(0)};
@@ -43,7 +48,9 @@ void CircuitTests::removeGate_removesAttachedWires()
 {
     Circuit circuit;
     const ComponentId source = circuit.addSource(QPointF(0.0, 0.0), SignalValue::True);
-    const ComponentId gateId = circuit.addGate(GateKind::And, QPointF(100.0, 0.0)).value();
+    const std::optional<ComponentId> gateIdOpt = circuit.addGate(GateKind::And, QPointF(100.0, 0.0));
+    QVERIFY(gateIdOpt.has_value());
+    const ComponentId gateId = gateIdOpt.value();
 
     const PinId sourceOut{source, sourceOutputPinIndex()};
     const PinId gateInput{gateId, gateInputPinIndex(0)};
@@ -60,7 +67,9 @@ void CircuitTests::removeWire_removesOnlyMatchingWire()
     Circuit circuit;
     const ComponentId sourceA = circuit.addSource(QPointF(0.0, 0.0), SignalValue::True);
     const ComponentId sourceB = circuit.addSource(QPointF(0.0, 0.0), SignalValue::False);
-    const ComponentId gateId = circuit.addGate(GateKind::And, QPointF(100.0, 0.0)).value();
+    const std::optional<ComponentId> gateIdOpt = circuit.addGate(GateKind::And, QPointF(100.0, 0.0));
+    QVERIFY(gateIdOpt.has_value());
+    const ComponentId gateId = gateIdOpt.value();
 
     const PinId sourceAOut{sourceA, sourceOutputPinIndex()};
     const PinId sourceBOut{sourceB, sourceOutputPinIndex()};

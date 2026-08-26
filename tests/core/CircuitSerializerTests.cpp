@@ -21,7 +21,9 @@ void CircuitSerializerTests::roundTrip_preservesCircuitTopology()
     Circuit circuit;
     const ComponentId sourceA = circuit.addSource(QPointF(10.0, 20.0), SignalValue::True);
     const ComponentId sourceB = circuit.addSource(QPointF(10.0, 80.0), SignalValue::False);
-    const ComponentId andGate = circuit.addGate(GateKind::And, QPointF(200.0, 40.0)).value();
+    const std::optional<ComponentId> andGateOpt = circuit.addGate(GateKind::And, QPointF(200.0, 40.0));
+    QVERIFY(andGateOpt.has_value());
+    const ComponentId andGate = andGateOpt.value();
 
     const PinId sourceAOut{sourceA, sourceOutputPinIndex()};
     const PinId sourceBOut{sourceB, sourceOutputPinIndex()};
@@ -39,16 +41,20 @@ void CircuitSerializerTests::roundTrip_preservesCircuitTopology()
     QCOMPARE(static_cast<int>(loaded->gates().size()), 1);
     QCOMPARE(loaded->wires().size(), 2);
     QCOMPARE(loaded->findSource(sourceA)->value(), SignalValue::True);
+    QCOMPARE(loaded->findSource(sourceB)->value(), SignalValue::False);
 }
 
 void CircuitSerializerTests::fromJson_rejectsInvalidWire()
 {
     Circuit circuit;
     const ComponentId source = circuit.addSource(QPointF(0.0, 0.0), SignalValue::False);
-    const ComponentId gate = circuit.addGate(GateKind::Not, QPointF(100.0, 0.0)).value();
+    const std::optional<ComponentId> gateOpt = circuit.addGate(GateKind::Not, QPointF(100.0, 0.0));
+    QVERIFY(gateOpt.has_value());
+    const ComponentId gate = gateOpt.value();
 
     QJsonObject json = CircuitSerializer::toJson(circuit);
     QJsonArray wires;
+    // Same-component wire (gate output -> same gate input) must be rejected on load.
     QJsonObject badWire;
     QJsonObject from;
     from.insert(QStringLiteral("componentId"), static_cast<qint64>(gate.value));

@@ -2,6 +2,8 @@
 
 #include <QTest>
 
+// Unit tests for SimulationEngine static gate evaluators (truth tables, not circuit wiring).
+
 using namespace digitallogic;
 
 class GateTests final : public QObject {
