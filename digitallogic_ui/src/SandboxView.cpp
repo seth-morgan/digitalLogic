@@ -22,6 +22,13 @@
 #include <QPainter>
 
 #include "digitallogic/ui/SandboxMimeTypes.h"
+
+namespace digitallogic::ui {
+
+/**
+ * @brief Constructs the sandbox view and its circuit controller.
+ */
+SandboxView::SandboxView(QWidget* parent)
     : QGraphicsView(parent)
 {
     auto* scene = new QGraphicsScene(this);
@@ -45,6 +52,9 @@
 }
 
 // Wire creation starts only from source or gate output pins.
+/**
+ * @brief Starts a wire drag when the press lands on a pin hotspot.
+ */
 bool SandboxView::tryBeginWireAt(const QPointF& scenePos)
 {
     PinGraphicsItem* pin = m_circuitController->findPinAtScenePos(scenePos);
@@ -61,6 +71,9 @@ bool SandboxView::tryBeginWireAt(const QPointF& scenePos)
     return true;
 }
 
+/**
+ * @brief Handles press for selection, wire start, and item interaction.
+ */
 void SandboxView::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton) {
@@ -75,6 +88,9 @@ void SandboxView::mousePressEvent(QMouseEvent* event)
     setFocus();
 }
 
+/**
+ * @brief Updates an in-progress wire drag as the cursor moves.
+ */
 void SandboxView::mouseMoveEvent(QMouseEvent* event)
 {
     if (m_circuitController->isWireDragInProgress()) {
@@ -86,6 +102,9 @@ void SandboxView::mouseMoveEvent(QMouseEvent* event)
     QGraphicsView::mouseMoveEvent(event);
 }
 
+/**
+ * @brief Completes or cancels an in-progress wire drag on release.
+ */
 void SandboxView::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton && m_circuitController->isWireDragInProgress()) {
@@ -98,6 +117,9 @@ void SandboxView::mouseReleaseEvent(QMouseEvent* event)
     QGraphicsView::mouseReleaseEvent(event);
 }
 
+/**
+ * @brief Handles keyboard shortcuts such as Delete for selection removal.
+ */
 void SandboxView::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
@@ -109,6 +131,9 @@ void SandboxView::keyPressEvent(QKeyEvent* event)
     QGraphicsView::keyPressEvent(event);
 }
 
+/**
+ * @brief Accepts gate-palette drag events over the canvas.
+ */
 void SandboxView::dragEnterEvent(QDragEnterEvent* event)
 {
     if (event->mimeData()->hasFormat(QString::fromLatin1(kGateMimeType))) {
@@ -116,6 +141,9 @@ void SandboxView::dragEnterEvent(QDragEnterEvent* event)
     }
 }
 
+/**
+ * @brief Updates drag feedback while a gate is dragged over the canvas.
+ */
 void SandboxView::dragMoveEvent(QDragMoveEvent* event)
 {
     if (event->mimeData()->hasFormat(QString::fromLatin1(kGateMimeType))) {
@@ -123,6 +151,9 @@ void SandboxView::dragMoveEvent(QDragMoveEvent* event)
     }
 }
 
+/**
+ * @brief Places a gate when a palette item is dropped on the canvas.
+ */
 void SandboxView::dropEvent(QDropEvent* event)
 {
     if (!event->mimeData()->hasFormat(QString::fromLatin1(kGateMimeType))) {
@@ -143,6 +174,9 @@ void SandboxView::dropEvent(QDropEvent* event)
     }
 }
 
+/**
+ * @brief Draws the sandbox background grid.
+ */
 void SandboxView::drawBackground(QPainter* painter, const QRectF& rect)
 {
     painter->fillRect(rect, AppTheme::background());

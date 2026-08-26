@@ -10,12 +10,18 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs a simulation controller for the given circuit controller.
+ */
 SimulationController::SimulationController(CircuitController* circuitController, QObject* parent)
     : QObject(parent)
     , m_circuitController(circuitController)
 {
 }
 
+/**
+ * @brief Runs the simulation engine and paints resulting pin values.
+ */
 void SimulationController::runSimulation()
 {
     if (m_circuitController == nullptr) {
@@ -37,6 +43,9 @@ void SimulationController::runSimulation()
     m_circuitController->applySimulationResults(pinValues);
 }
 
+/**
+ * @brief Clears the last simulation results from the sandbox visuals.
+ */
 void SimulationController::resetSimulation()
 {
     if (m_circuitController != nullptr) {

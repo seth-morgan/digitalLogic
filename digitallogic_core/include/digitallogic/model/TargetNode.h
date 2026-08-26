@@ -15,8 +15,15 @@ namespace digitallogic {
  */
 class TargetNode final {
 public:
+    /**
+     * @brief Creates a target node with the given component identifier.
+     * @param id Unique component id.
+     */
     explicit TargetNode(ComponentId id);
 
+    /**
+     * @brief Returns this target's component identifier.
+     */
     [[nodiscard]] ComponentId id() const noexcept { return m_id; }
 
 private:

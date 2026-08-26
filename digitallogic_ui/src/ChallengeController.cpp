@@ -18,6 +18,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs a challenge controller wired to sandbox and challenge UI.
+ */
 ChallengeController::ChallengeController(CircuitController* circuitController, GatePaletteWidget* gatePalette,
                                          ChallengePanelWidget* challengePanel,
                                          SimulationController* simulationController, WinCelebrationOverlay* winOverlay,
@@ -40,6 +43,9 @@ ChallengeController::ChallengeController(CircuitController* circuitController, G
     }
 }
 
+/**
+ * @brief Opens the level picker dialog and starts the chosen level.
+ */
 void ChallengeController::openLevelPicker()
 {
     ChallengeDialog dialog;
@@ -50,6 +56,9 @@ void ChallengeController::openLevelPicker()
     startLevel(dialog.selectedLevelIndex());
 }
 
+/**
+ * @brief Loads and starts the challenge level at the given catalog index.
+ */
 void ChallengeController::startLevel(const int index)
 {
     const ChallengeLevel* level = ChallengeCatalog::levelAt(index);
@@ -86,6 +95,9 @@ void ChallengeController::startLevel(const int index)
     emit statusMessage(QStringLiteral("Challenge started: %1").arg(level->title));
 }
 
+/**
+ * @brief Applies the level's gate allowances as the current budget.
+ */
 void ChallengeController::applyLevelBudget(const ChallengeLevel& level)
 {
     if (m_circuitController == nullptr) {
@@ -99,6 +111,9 @@ void ChallengeController::applyLevelBudget(const ChallengeLevel& level)
     m_circuitController->setChallengeGateBudget(budget);
 }
 
+/**
+ * @brief Refreshes the palette with the remaining challenge gate budget.
+ */
 void ChallengeController::refreshPaletteBudget()
 {
     if (m_gatePalette == nullptr || m_circuitController == nullptr || !m_circuitController->isChallengeMode()) {
@@ -108,6 +123,9 @@ void ChallengeController::refreshPaletteBudget()
     m_gatePalette->updateGateBudget(m_circuitController->challengeGateBudgetRemaining());
 }
 
+/**
+ * @brief Validates the player's circuit against the current level.
+ */
 void ChallengeController::checkSolution()
 {
     if (!m_currentLevelIndex.has_value() || m_circuitController == nullptr) {
@@ -141,6 +159,9 @@ void ChallengeController::checkSolution()
     }
 }
 
+/**
+ * @brief Advances from a solved level to the next catalog level.
+ */
 void ChallengeController::advanceToNextLevel()
 {
     if (!m_levelSolved || !m_currentLevelIndex.has_value()) {
@@ -157,6 +178,9 @@ void ChallengeController::advanceToNextLevel()
     startLevel(nextIndex);
 }
 
+/**
+ * @brief Exits challenge mode and restores sandbox mode.
+ */
 void ChallengeController::exitChallengeMode()
 {
     m_currentLevelIndex.reset();

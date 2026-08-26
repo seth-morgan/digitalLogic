@@ -17,11 +17,17 @@ struct PinId final {
     ComponentId componentId{};
     int pinIndex{0}; // Zero-based pin index on the component
 
+    /**
+     * @brief Returns true when both pins refer to the same component and index.
+     */
     [[nodiscard]] bool operator==(const PinId& other) const noexcept
     {
         return componentId == other.componentId && pinIndex == other.pinIndex;
     }
 
+    /**
+     * @brief Returns true when the pin identities differ.
+     */
     [[nodiscard]] bool operator!=(const PinId& other) const noexcept
     {
         return !(*this == other);
@@ -35,6 +41,9 @@ namespace std {
 // Combine component hash with pin index for unordered-map lookup.
 template <>
 struct hash<digitallogic::PinId> {
+    /**
+     * @brief Hashes a PinId by combining component id and pin index.
+     */
     std::size_t operator()(const digitallogic::PinId& pin) const noexcept
     {
         const std::size_t componentHash = std::hash<digitallogic::ComponentId>{}(pin.componentId);

@@ -24,16 +24,37 @@ class PinGraphicsItem;
  */
 class TargetGraphicsItem final : public QGraphicsItemGroup {
 public:
+    /**
+     * @brief Constructs a target graphics item for the given component id.
+     */
     TargetGraphicsItem(ComponentId componentId, CircuitController* controller, QGraphicsItem* parent = nullptr);
 
+    /**
+     * @brief Returns the target component id.
+     */
     [[nodiscard]] ComponentId componentId() const noexcept { return m_componentId; }
+    /**
+     * @brief Returns the input pin graphics item.
+     */
     [[nodiscard]] PinGraphicsItem* inputPin() const noexcept { return m_inputPin; }
 
+    /**
+     * @brief Updates the input appearance from a simulated signal value.
+     */
     void setInputSignal(SignalValue value, bool simulated);
+    /**
+     * @brief Clears simulation highlight styling from the target.
+     */
     void clearSimulationHighlight();
+    /**
+     * @brief Recomputes attached wire endpoints after the target moves.
+     */
     void updateWirePaths();
 
 protected:
+    /**
+     * @brief Syncs model position when the item is moved on the canvas.
+     */
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
 
 private:

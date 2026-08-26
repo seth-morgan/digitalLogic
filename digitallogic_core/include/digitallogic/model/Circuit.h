@@ -110,17 +110,59 @@ public:
      */
     [[nodiscard]] bool setComponentPosition(ComponentId id, const QPointF& position);
 
+    /**
+     * @brief Returns all source nodes in the circuit.
+     */
     [[nodiscard]] const QVector<SourceNode>& sources() const noexcept { return m_sources; }
+
+    /**
+     * @brief Returns all target nodes in the circuit.
+     */
     [[nodiscard]] const QVector<TargetNode>& targets() const noexcept { return m_targets; }
+
+    /**
+     * @brief Returns all gates owned by the circuit.
+     */
     [[nodiscard]] const std::vector<std::unique_ptr<Gate>>& gates() const noexcept { return m_gates; }
+
+    /**
+     * @brief Returns all wires in the circuit.
+     */
     [[nodiscard]] const QVector<Wire>& wires() const noexcept { return m_wires; }
+
+    /**
+     * @brief Returns canvas placements keyed by component id.
+     */
     [[nodiscard]] const QHash<ComponentId, ComponentPlacement>& placements() const noexcept { return m_placements; }
 
+    /**
+     * @brief Finds a mutable source by component id, or nullptr if absent.
+     */
     [[nodiscard]] SourceNode* findSource(ComponentId id);
+
+    /**
+     * @brief Finds a const source by component id, or nullptr if absent.
+     */
     [[nodiscard]] const SourceNode* findSource(ComponentId id) const;
+
+    /**
+     * @brief Finds a mutable target by component id, or nullptr if absent.
+     */
     [[nodiscard]] TargetNode* findTarget(ComponentId id);
+
+    /**
+     * @brief Finds a const target by component id, or nullptr if absent.
+     */
     [[nodiscard]] const TargetNode* findTarget(ComponentId id) const;
+
+    /**
+     * @brief Finds a mutable gate by component id, or nullptr if absent.
+     */
     [[nodiscard]] Gate* findGate(ComponentId id);
+
+    /**
+     * @brief Finds a const gate by component id, or nullptr if absent.
+     */
     [[nodiscard]] const Gate* findGate(ComponentId id) const;
 
     /**

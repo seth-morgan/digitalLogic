@@ -8,6 +8,9 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Converts a signal value to a human-readable label.
+ */
 const char* toString(const SignalValue value)
 {
     // Map enum values to short labels shown in the UI.

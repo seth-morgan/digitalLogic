@@ -31,8 +31,19 @@ class Gate {
 public:
     virtual ~Gate() = default;
 
+    /**
+     * @brief Returns this gate's component identifier.
+     */
     [[nodiscard]] ComponentId id() const noexcept { return m_id; }
+
+    /**
+     * @brief Returns the gate kind (AND, OR, NOT, etc.).
+     */
     [[nodiscard]] GateKind kind() const noexcept { return m_kind; }
+
+    /**
+     * @brief Returns how many input pins this gate has.
+     */
     [[nodiscard]] int inputCount() const noexcept { return m_inputCount; }
 
     /**
@@ -43,7 +54,9 @@ public:
     [[nodiscard]] virtual SignalValue evaluate(const QVector<SignalValue>& inputs) const = 0;
 
 protected:
-    // Concrete gates call this to register id, kind, and pin arity.
+    /**
+     * @brief Registers id, kind, and input arity for a concrete gate.
+     */
     Gate(ComponentId id, GateKind kind, int inputCount);
 
 private:

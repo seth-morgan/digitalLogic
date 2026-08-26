@@ -16,6 +16,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs the in-game challenge info and action panel.
+ */
 ChallengePanelWidget::ChallengePanelWidget(QWidget* parent)
     : QWidget(parent)
 {
@@ -58,6 +61,9 @@ ChallengePanelWidget::ChallengePanelWidget(QWidget* parent)
     setVisible(false);
 }
 
+/**
+ * @brief Displays title, description, and next-level availability for a level.
+ */
 void ChallengePanelWidget::showLevel(const QString& title, const QString& description, const bool hasNextLevel)
 {
     m_titleLabel->setText(title);
@@ -67,11 +73,17 @@ void ChallengePanelWidget::showLevel(const QString& title, const QString& descri
     setLevelSolved(false);
 }
 
+/**
+ * @brief Enables or disables the Next Level action after a solve check.
+ */
 void ChallengePanelWidget::setLevelSolved(const bool solved)
 {
     m_nextLevelButton->setEnabled(solved);
 }
 
+/**
+ * @brief Shows or hides the panel for challenge mode.
+ */
 void ChallengePanelWidget::setVisibleForChallenge(const bool visible)
 {
     setVisible(visible);

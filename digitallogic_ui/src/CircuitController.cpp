@@ -33,6 +33,9 @@ namespace {
 constexpr qreal kPinHitRadius = 14.0; // Slightly larger than PinGraphicsItem visual radius for easier clicking.
 
 // Recursively gather PinGraphicsItem children (pins live under source/gate/target groups).
+/**
+ * @brief Recursively collects pin graphics items under a scene item subtree.
+ */
 void collectPins(QGraphicsItem* item, QVector<PinGraphicsItem*>& pins)
 {
     if (item == nullptr) {
@@ -69,12 +72,18 @@ ItemType* findComponentItem(QGraphicsScene* scene, const ComponentId id)
 
 } // namespace
 
+/**
+ * @brief Constructs a controller bound to the given sandbox view.
+ */
 CircuitController::CircuitController(SandboxView* view, QObject* parent)
     : QObject(parent)
     , m_view(view)
 {
 }
 
+/**
+ * @brief Clears challenge-only controller state and gate budgets.
+ */
 void CircuitController::resetChallengeState()
 {
     m_challengeMode = false;
@@ -83,6 +92,9 @@ void CircuitController::resetChallengeState()
     clearChallengeGateBudget();
 }
 
+/**
+ * @brief Places the default sandbox input sources on an empty canvas.
+ */
 void CircuitController::addDefaultSources()
 {
     const ComponentId sourceA = m_circuit.addSource(QPointF(80.0, 120.0), SignalValue::False);
@@ -98,6 +110,9 @@ void CircuitController::initializeDefaultSources()
     emit circuitChanged();
 }
 
+/**
+ * @brief Leaves challenge mode and restores a normal sandbox canvas.
+ */
 void CircuitController::restoreSandboxMode()
 {
     removeAllGraphics();
@@ -107,6 +122,9 @@ void CircuitController::restoreSandboxMode()
     emit circuitChanged();
 }
 
+/**
+ * @brief Loads a challenge level's locked sources and target onto the canvas.
+ */
 void CircuitController::loadChallengeLevel(const ChallengeLevel& level, QHash<QString, ComponentId>& outSourceIdsByLabel,
                                            ComponentId& outTargetId)
 {
@@ -132,6 +150,9 @@ void CircuitController::loadChallengeLevel(const ChallengeLevel& level, QHash<QS
     emit statusMessage(level.description);
 }
 
+/**
+ * @brief Sets the remaining challenge gate budget used for placement checks.
+ */
 void CircuitController::setChallengeGateBudget(const QHash<GateKind, int>& remaining)
 {
     m_challengeGateBudgetTotal = remaining;
@@ -139,6 +160,9 @@ void CircuitController::setChallengeGateBudget(const QHash<GateKind, int>& remai
     emit gateBudgetChanged();
 }
 
+/**
+ * @brief Clears any challenge gate budget constraints.
+ */
 void CircuitController::clearChallengeGateBudget()
 {
     m_challengeGateBudget.clear();
@@ -147,6 +171,9 @@ void CircuitController::clearChallengeGateBudget()
 }
 
 // Challenge sources and the OUT target cannot be deleted by the player.
+/**
+ * @brief Returns whether the component is a protected challenge source or target.
+ */
 bool CircuitController::isProtectedComponent(const ComponentId id) const
 {
     if (!m_challengeMode) {
@@ -160,6 +187,9 @@ bool CircuitController::isProtectedComponent(const ComponentId id) const
     return m_challengeSourceIdsByLabel.values().contains(id);
 }
 
+/**
+ * @brief Begins a wire drag starting at the given pin.
+ */
 void CircuitController::beginWireDrag(PinGraphicsItem* fromPin, const QPointF& scenePos)
 {
     if (fromPin == nullptr || m_view == nullptr || m_view->scene() == nullptr) {
@@ -182,6 +212,9 @@ void CircuitController::beginWireDrag(PinGraphicsItem* fromPin, const QPointF& s
     updatePreviewLine(scenePos);
 }
 
+/**
+ * @brief Updates the rubber-band wire preview during an active drag.
+ */
 void CircuitController::updateWireDrag(const QPointF& scenePos)
 {
     if (!m_wireDragInProgress) {
@@ -191,6 +224,9 @@ void CircuitController::updateWireDrag(const QPointF& scenePos)
     updatePreviewLine(scenePos);
 }
 
+/**
+ * @brief Updates the rubber-band preview line to the given scene position.
+ */
 void CircuitController::updatePreviewLine(const QPointF& scenePos)
 {
     if (m_wireDragFromPin == nullptr || m_wirePreviewLine == nullptr) {
@@ -201,6 +237,9 @@ void CircuitController::updatePreviewLine(const QPointF& scenePos)
     m_wirePreviewLine->setLine(QLineF(fromScene, scenePos));
 }
 
+/**
+ * @brief Completes a wire drag at the release scene position.
+ */
 void CircuitController::endWireDrag(const QPointF& scenePos)
 {
     if (!m_wireDragInProgress) {
@@ -221,6 +260,9 @@ void CircuitController::endWireDrag(const QPointF& scenePos)
     cancelWireDrag();
 }
 
+/**
+ * @brief Attempts to connect two pins and reports validation failures.
+ */
 bool CircuitController::tryConnectPins(const PinId& from, const PinId& to)
 {
     const WireValidationResult validation = m_circuit.validateWire(from, to);
@@ -239,11 +281,17 @@ bool CircuitController::tryConnectPins(const PinId& from, const PinId& to)
     return true;
 }
 
+/**
+ * @brief Emits a user-facing status message for a wire validation failure.
+ */
 void CircuitController::reportWireFailure(const WireValidationResult result)
 {
     emit statusMessage(QString::fromUtf8(wireValidationMessage(result)));
 }
 
+/**
+ * @brief Cancels an in-progress wire drag and removes the preview line.
+ */
 void CircuitController::cancelWireDrag()
 {
     clearPendingWireHighlight();
@@ -258,6 +306,9 @@ void CircuitController::cancelWireDrag()
     m_wireDragInProgress = false;
 }
 
+/**
+ * @brief Clears pending-wire highlight from the drag-start pin.
+ */
 void CircuitController::clearPendingWireHighlight()
 {
     if (m_wireDragFromPin != nullptr) {
@@ -265,6 +316,9 @@ void CircuitController::clearPendingWireHighlight()
     }
 }
 
+/**
+ * @brief Recomputes geometry for every wire on the canvas.
+ */
 void CircuitController::updateAllWirePaths()
 {
     for (WireGraphicsItem* wireItem : m_wireItems) {
@@ -280,6 +334,9 @@ void CircuitController::updateAllWirePaths()
     }
 }
 
+/**
+ * @brief Toggles the boolean value of an input source.
+ */
 void CircuitController::toggleSource(const ComponentId sourceId)
 {
     if (!m_circuit.toggleSource(sourceId)) {
@@ -296,6 +353,9 @@ void CircuitController::toggleSource(const ComponentId sourceId)
     emit circuitChanged();
 }
 
+/**
+ * @brief Places a gate from the palette at the given scene position.
+ */
 bool CircuitController::placeGateFromPalette(const GateKind kind, const QPointF& scenePosition)
 {
     if (m_challengeMode) {
@@ -327,6 +387,9 @@ bool CircuitController::placeGateFromPalette(const GateKind kind, const QPointF&
     return true;
 }
 
+/**
+ * @brief Finds the graphics pin for the given pin id.
+ */
 PinGraphicsItem* CircuitController::findPin(const PinId& pinId) const
 {
     if (m_view == nullptr || m_view->scene() == nullptr) {
@@ -347,11 +410,17 @@ PinGraphicsItem* CircuitController::findPin(const PinId& pinId) const
     return nullptr;
 }
 
+/**
+ * @brief Updates a gate's model position after it is moved in the view.
+ */
 void CircuitController::updateGatePosition(const ComponentId gateId, const QPointF& position)
 {
     (void)m_circuit.setComponentPosition(gateId, position);
 }
 
+/**
+ * @brief Deletes the currently selected canvas items from model and view.
+ */
 void CircuitController::deleteSelection()
 {
     if (m_view == nullptr || m_view->scene() == nullptr) {
@@ -401,6 +470,9 @@ void CircuitController::deleteSelection()
     }
 }
 
+/**
+ * @brief Removes a wire graphics item from the scene and bookkeeping.
+ */
 void CircuitController::removeWireItem(WireGraphicsItem* wireItem)
 {
     if (wireItem == nullptr || m_view == nullptr || m_view->scene() == nullptr) {
@@ -412,6 +484,9 @@ void CircuitController::removeWireItem(WireGraphicsItem* wireItem)
     delete wireItem;
 }
 
+/**
+ * @brief Removes a gate graphics item and its attached wires.
+ */
 void CircuitController::removeGateItem(GateGraphicsItem* gateItem)
 {
     if (gateItem == nullptr || m_view == nullptr || m_view->scene() == nullptr) {
@@ -438,6 +513,9 @@ void CircuitController::removeGateItem(GateGraphicsItem* gateItem)
     delete gateItem;
 }
 
+/**
+ * @brief Clears all components and graphics from the canvas.
+ */
 void CircuitController::clearCanvas()
 {
     if (m_view == nullptr || m_view->scene() == nullptr) {
@@ -487,6 +565,9 @@ void CircuitController::clearCanvas()
                                      : QStringLiteral("Canvas cleared."));
 }
 
+/**
+ * @brief Saves the circuit model to the given file path.
+ */
 bool CircuitController::saveToFile(const QString& path)
 {
     QFile file(path);
@@ -505,6 +586,9 @@ bool CircuitController::saveToFile(const QString& path)
     return true;
 }
 
+/**
+ * @brief Loads a circuit model from the given file path.
+ */
 bool CircuitController::loadFromFile(const QString& path)
 {
     QFile file(path);
@@ -535,6 +619,9 @@ bool CircuitController::loadFromFile(const QString& path)
     return true;
 }
 
+/**
+ * @brief Removes all circuit graphics from the scene.
+ */
 void CircuitController::removeAllGraphics()
 {
     if (m_view == nullptr || m_view->scene() == nullptr) {
@@ -559,6 +646,9 @@ void CircuitController::removeAllGraphics()
     m_wireItems.clear();
 }
 
+/**
+ * @brief Rebuilds all graphics items from the current circuit model.
+ */
 void CircuitController::rebuildGraphics()
 {
     for (const SourceNode& source : m_circuit.sources()) {
@@ -582,6 +672,9 @@ void CircuitController::rebuildGraphics()
 }
 
 // Prefer the closest pin within kPinHitRadius for forgiving wire drop targeting.
+/**
+ * @brief Finds a pin under the given scene position, if any.
+ */
 PinGraphicsItem* CircuitController::findPinAtScenePos(const QPointF& scenePos) const
 {
     if (m_view == nullptr || m_view->scene() == nullptr) {
@@ -607,6 +700,9 @@ PinGraphicsItem* CircuitController::findPinAtScenePos(const QPointF& scenePos) c
     return closestPin;
 }
 
+/**
+ * @brief Finds the source graphics item for the given component id.
+ */
 SourceGraphicsItem* CircuitController::findSourceItem(const ComponentId id) const
 {
     if (m_view == nullptr) {
@@ -616,6 +712,9 @@ SourceGraphicsItem* CircuitController::findSourceItem(const ComponentId id) cons
     return findComponentItem<SourceGraphicsItem>(m_view->scene(), id);
 }
 
+/**
+ * @brief Finds the target graphics item for the given component id.
+ */
 TargetGraphicsItem* CircuitController::findTargetItem(const ComponentId id) const
 {
     if (m_view == nullptr) {
@@ -625,6 +724,9 @@ TargetGraphicsItem* CircuitController::findTargetItem(const ComponentId id) cons
     return findComponentItem<TargetGraphicsItem>(m_view->scene(), id);
 }
 
+/**
+ * @brief Finds the gate graphics item for the given component id.
+ */
 GateGraphicsItem* CircuitController::findGateItem(const ComponentId id) const
 {
     if (m_view == nullptr) {
@@ -634,6 +736,9 @@ GateGraphicsItem* CircuitController::findGateItem(const ComponentId id) const
     return findComponentItem<GateGraphicsItem>(m_view->scene(), id);
 }
 
+/**
+ * @brief Applies simulated pin values to sandbox graphics.
+ */
 void CircuitController::applySimulationResults(const QHash<PinId, SignalValue>& pinValues)
 {
     for (auto it = pinValues.begin(); it != pinValues.end(); ++it) {
@@ -695,6 +800,9 @@ void CircuitController::applySimulationResults(const QHash<PinId, SignalValue>& 
     }
 }
 
+/**
+ * @brief Clears simulation coloring from all sandbox graphics.
+ */
 void CircuitController::clearSimulationVisuals()
 {
     if (m_view == nullptr || m_view->scene() == nullptr) {
@@ -729,6 +837,9 @@ void CircuitController::clearSimulationVisuals()
     }
 }
 
+/**
+ * @brief Creates sandbox graphics for a source component.
+ */
 void CircuitController::createSourceItem(const ComponentId id, const QPointF& position, const QString& label,
                                          const bool locked)
 {
@@ -746,6 +857,9 @@ void CircuitController::createSourceItem(const ComponentId id, const QPointF& po
     }
 }
 
+/**
+ * @brief Creates sandbox graphics for a target component.
+ */
 void CircuitController::createTargetItem(const ComponentId id, const QPointF& position)
 {
     auto* targetItem = new TargetGraphicsItem(id, this);
@@ -754,6 +868,9 @@ void CircuitController::createTargetItem(const ComponentId id, const QPointF& po
     targetItem->clearSimulationHighlight();
 }
 
+/**
+ * @brief Creates sandbox graphics for a gate component.
+ */
 void CircuitController::createGateItem(const ComponentId id, const GateKind kind, const int inputCount, const QPointF& position)
 {
     auto* gateItem = new GateGraphicsItem(id, kind, inputCount, this);
@@ -761,6 +878,9 @@ void CircuitController::createGateItem(const ComponentId id, const GateKind kind
     m_view->scene()->addItem(gateItem);
 }
 
+/**
+ * @brief Creates a wire graphics item between two pins.
+ */
 void CircuitController::createWireItem(const PinId& from, const PinId& to)
 {
     PinGraphicsItem* fromPin = findPin(from);

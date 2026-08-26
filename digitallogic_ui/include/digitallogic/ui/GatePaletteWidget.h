@@ -21,13 +21,25 @@ class GatePaletteWidget final : public QWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructs the gate palette and its draggable gate buttons.
+     */
     explicit GatePaletteWidget(QWidget* parent = nullptr);
 
+    /**
+     * @brief Enables or disables challenge-mode budget constraints on the palette.
+     */
     void setChallengeMode(bool enabled);
+    /**
+     * @brief Updates remaining gate counts and disables exhausted buttons.
+     */
     // Remaining counts per GateKind; buttons disable when a budget hits zero.
     void updateGateBudget(const QHash<GateKind, int>& remaining);
 
 protected:
+    /**
+     * @brief Intercepts button press events to start a gate drag.
+     */
     bool eventFilter(QObject* watched, QEvent* event) override;
 
 private:
@@ -37,9 +49,21 @@ private:
         QPushButton* button{nullptr};
     };
 
+    /**
+     * @brief Begins a drag-and-drop operation for the given gate kind.
+     */
     void startGateDrag(GateKind kind, QWidget* sourceWidget);
+    /**
+     * @brief Refreshes enabled state and label for one palette button.
+     */
     void refreshButtonState(GateButtonEntry& entry);
+    /**
+     * @brief Refreshes enabled state for every palette button.
+     */
     void refreshAllButtons();
+    /**
+     * @brief Finds the palette entry whose button matches the watched object.
+     */
     [[nodiscard]] GateButtonEntry* findEntry(QObject* watched);
 
     QVector<GateButtonEntry> m_gateButtons;

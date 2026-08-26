@@ -25,6 +25,9 @@ constexpr qreal kFlowDashLength = 10.0;
 constexpr qreal kFlowGapLength = 8.0;
 }
 
+/**
+ * @brief Constructs a wire between the given from and to pins.
+ */
 WireGraphicsItem::WireGraphicsItem(PinGraphicsItem* fromPin, PinGraphicsItem* toPin, QGraphicsItem* parent)
     : QGraphicsLineItem(parent)
     , m_fromPin(fromPin)
@@ -39,6 +42,9 @@ WireGraphicsItem::WireGraphicsItem(PinGraphicsItem* fromPin, PinGraphicsItem* to
     applySelectionStyle();
 }
 
+/**
+ * @brief Recomputes the wire line endpoints from the connected pins.
+ */
 void WireGraphicsItem::updatePath()
 {
     if (m_fromPin == nullptr || m_toPin == nullptr) {
@@ -51,6 +57,9 @@ void WireGraphicsItem::updatePath()
     setLine(QLineF(fromScene, toScene));
 }
 
+/**
+ * @brief Updates wire color from a simulated signal value.
+ */
 void WireGraphicsItem::setSignalValue(const SignalValue value, const bool simulated)
 {
     m_signalValue = value;
@@ -59,6 +68,9 @@ void WireGraphicsItem::setSignalValue(const SignalValue value, const bool simula
     applySelectionStyle();
 }
 
+/**
+ * @brief Clears simulation coloring from the wire.
+ */
 void WireGraphicsItem::clearSimulationHighlight()
 {
     m_signalValue = SignalValue::Unknown;
@@ -68,11 +80,17 @@ void WireGraphicsItem::clearSimulationHighlight()
     applySelectionStyle();
 }
 
+/**
+ * @brief Returns whether the scene point hits this wire within tolerance.
+ */
 bool WireGraphicsItem::containsScenePoint(const QPointF& scenePos) const
 {
     return shape().contains(mapFromScene(scenePos));
 }
 
+/**
+ * @brief Applies selected/deselected stroke styling to the wire.
+ */
 void WireGraphicsItem::applySelectionStyle()
 {
     QPen wirePen(m_signalColor, kWireWidth, Qt::SolidLine, Qt::RoundCap);
@@ -85,6 +103,9 @@ void WireGraphicsItem::applySelectionStyle()
 }
 
 // Called by QGraphicsScene::advance; scrolls the flow dash pattern along the wire.
+/**
+ * @brief Advances the animated signal-flow dashes along the wire.
+ */
 void WireGraphicsItem::advance(const int phase)
 {
     if (phase != 0 || !m_simulated || m_signalValue == SignalValue::Unknown) {
@@ -99,6 +120,9 @@ void WireGraphicsItem::advance(const int phase)
     update();
 }
 
+/**
+ * @brief Paints the wire stroke and optional animated signal flow.
+ */
 void WireGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     // Suppress Qt's default selection outline; we style selection via pen color.
@@ -125,6 +149,9 @@ void WireGraphicsItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
 }
 
 // Widen the hit region beyond the visual stroke for easier selection.
+/**
+ * @brief Returns a widened shape used for selection and hit testing.
+ */
 QPainterPath WireGraphicsItem::shape() const
 {
     QPainterPath path;
@@ -137,6 +164,9 @@ QPainterPath WireGraphicsItem::shape() const
     return stroker.createStroke(path);
 }
 
+/**
+ * @brief Updates selection styling when the item's state changes.
+ */
 QVariant WireGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemSelectedHasChanged) {

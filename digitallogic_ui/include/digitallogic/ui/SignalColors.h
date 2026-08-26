@@ -14,7 +14,7 @@
 namespace digitallogic::ui {
 
 /**
- * @brief Maps a signal value to the sandbox display color.
+ * @brief Returns the sandbox display color for a signal value when simulated.
  */
 [[nodiscard]] inline QColor signalColor(const SignalValue value, const bool simulated)
 {

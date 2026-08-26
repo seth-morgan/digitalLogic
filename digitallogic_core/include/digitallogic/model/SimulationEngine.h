@@ -40,12 +40,28 @@ public:
         const Circuit& circuit, const QHash<ComponentId, SignalValue>* sourceOverrides = nullptr);
 
     /**
-     * @brief Static gate helpers exposed for unit testing.
+     * @brief Evaluates an AND over the given inputs (for unit tests).
      */
     [[nodiscard]] static SignalValue evaluateAnd(const QVector<SignalValue>& inputs);
+
+    /**
+     * @brief Evaluates an OR over the given inputs (for unit tests).
+     */
     [[nodiscard]] static SignalValue evaluateOr(const QVector<SignalValue>& inputs);
+
+    /**
+     * @brief Evaluates a NOT of the given input (for unit tests).
+     */
     [[nodiscard]] static SignalValue evaluateNot(const SignalValue input);
+
+    /**
+     * @brief Evaluates a NAND over the given inputs (for unit tests).
+     */
     [[nodiscard]] static SignalValue evaluateNand(const QVector<SignalValue>& inputs);
+
+    /**
+     * @brief Evaluates an XOR over the given inputs (for unit tests).
+     */
     [[nodiscard]] static SignalValue evaluateXor(const QVector<SignalValue>& inputs);
 };
 

@@ -1,3 +1,9 @@
+/**
+ * @file ChallengeValidatorTests.cpp
+ * @brief Unit tests for ChallengeValidator against catalog level 0 (AND).
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/challenge/ChallengeCatalog.h"
 #include "digitallogic/challenge/ChallengeValidator.h"
 #include "digitallogic/model/Circuit.h"
@@ -41,6 +47,9 @@ private slots:
     void rejectsWrongGateCount();
 };
 
+/**
+ * @brief Builds a correctly wired AND solution for level 0 and expects success.
+ */
 void ChallengeValidatorTests::andLevelPassesWithCorrectWiring()
 {
     const ChallengeLevel* level = andLevel();
@@ -69,6 +78,9 @@ void ChallengeValidatorTests::andLevelPassesWithCorrectWiring()
     QVERIFY(result.success);
 }
 
+/**
+ * @brief Expects failure when the AND output is never wired to the target.
+ */
 void ChallengeValidatorTests::rejectsMissingTargetWire()
 {
     const ChallengeLevel* level = andLevel();
@@ -86,6 +98,9 @@ void ChallengeValidatorTests::rejectsMissingTargetWire()
     QCOMPARE(result.message, QStringLiteral("Connect your circuit to the output target."));
 }
 
+/**
+ * @brief Expects failure when the placed gate kind does not match the level.
+ */
 void ChallengeValidatorTests::rejectsWrongGateCount()
 {
     const ChallengeLevel* level = andLevel();

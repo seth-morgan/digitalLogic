@@ -13,67 +13,106 @@ QColor AppTheme::background()
     return QColor(QStringLiteral("#12151c"));
 }
 
+/**
+ * @brief Returns the default surface color for panels and chrome.
+ */
 QColor AppTheme::surface()
 {
     return QColor(QStringLiteral("#1c212b"));
 }
 
+/**
+ * @brief Returns the elevated surface color for overlays and raised panels.
+ */
 QColor AppTheme::surfaceElevated()
 {
     return QColor(QStringLiteral("#262c38"));
 }
 
+/**
+ * @brief Returns the primary text color.
+ */
 QColor AppTheme::textPrimary()
 {
     return QColor(QStringLiteral("#eef1f6"));
 }
 
+/**
+ * @brief Returns the muted secondary text color.
+ */
 QColor AppTheme::textMuted()
 {
     return QColor(QStringLiteral("#9aa3b2"));
 }
 
+/**
+ * @brief Returns the sandbox grid line color.
+ */
 QColor AppTheme::gridLine()
 {
     return QColor(QStringLiteral("#2a3140"));
 }
 
+/**
+ * @brief Returns the idle (unsimulated) wire color.
+ */
 QColor AppTheme::wireIdle()
 {
     return QColor(QStringLiteral("#5c6678"));
 }
 
+/**
+ * @brief Returns the default component body fill color.
+ */
 QColor AppTheme::componentFill()
 {
     return QColor(QStringLiteral("#313846"));
 }
 
+/**
+ * @brief Returns the default component border color.
+ */
 QColor AppTheme::componentBorder()
 {
     return QColor(QStringLiteral("#5c6678"));
 }
 
+/**
+ * @brief Returns the selection highlight color.
+ */
 QColor AppTheme::selection()
 {
     return QColor(QStringLiteral("#fbbf24"));
 }
 
+/**
+ * @brief Returns the accent color used for challenge targets.
+ */
 QColor AppTheme::targetAccent()
 {
     return QColor(QStringLiteral("#f59e0b"));
 }
 
+/**
+ * @brief Returns the color used for simulated true signals.
+ */
 QColor AppTheme::signalTrue()
 {
     return QColor(QStringLiteral("#22c55e"));
 }
 
+/**
+ * @brief Returns the color used for simulated false signals.
+ */
 QColor AppTheme::signalFalse()
 {
     return QColor(QStringLiteral("#ef4444"));
 }
 
 // Distinct accent per gate type so palette buttons and UI accents stay recognizable.
+/**
+ * @brief Returns the accent color associated with a gate kind.
+ */
 QColor AppTheme::gateAccent(const GateKind kind)
 {
     switch (kind) {
@@ -92,6 +131,9 @@ QColor AppTheme::gateAccent(const GateKind kind)
     }
 }
 
+/**
+ * @brief Returns the global QSS applied once at application startup.
+ */
 QString AppTheme::applicationStylesheet()
 {
     return QStringLiteral(
@@ -107,6 +149,9 @@ QString AppTheme::applicationStylesheet()
 }
 
 // Border-bottom + hover margin creates a pressed "physical button" look.
+/**
+ * @brief Returns the stylesheet for standard toolbar buttons.
+ */
 QString AppTheme::toolbarButtonStylesheet()
 {
     return QStringLiteral(
@@ -130,6 +175,9 @@ QString AppTheme::toolbarButtonStylesheet()
         "}");
 }
 
+/**
+ * @brief Returns the stylesheet for primary action buttons.
+ */
 QString AppTheme::primaryActionStylesheet()
 {
     return QStringLiteral(
@@ -147,6 +195,9 @@ QString AppTheme::primaryActionStylesheet()
         "QPushButton:disabled { background-color: #313846; color: #6b7280; border-bottom-color: #1a1f28; }");
 }
 
+/**
+ * @brief Returns the stylesheet for a palette button of the given gate kind.
+ */
 QString AppTheme::gateButtonStylesheet(const GateKind kind)
 {
     const QColor accent = gateAccent(kind);

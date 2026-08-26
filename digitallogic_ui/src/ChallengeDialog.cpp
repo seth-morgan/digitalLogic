@@ -17,6 +17,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs the challenge level picker dialog.
+ */
 ChallengeDialog::ChallengeDialog(QWidget* parent)
     : QDialog(parent)
 {
@@ -53,6 +56,9 @@ ChallengeDialog::ChallengeDialog(QWidget* parent)
     }
 }
 
+/**
+ * @brief Populates the list widget from the challenge catalog.
+ */
 void ChallengeDialog::populateLevels()
 {
     const QVector<ChallengeLevel>& levels = ChallengeCatalog::levels();

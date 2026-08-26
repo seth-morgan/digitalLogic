@@ -8,6 +8,9 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Registers id, kind, and input arity for a concrete gate.
+ */
 Gate::Gate(const ComponentId id, const GateKind kind, const int inputCount)
     : m_id(id)
     , m_kind(kind)

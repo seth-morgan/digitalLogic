@@ -20,11 +20,23 @@ class ChallengePanelWidget final : public QWidget {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructs the in-game challenge info and action panel.
+     */
     explicit ChallengePanelWidget(QWidget* parent = nullptr);
 
+    /**
+     * @brief Displays title, description, and next-level availability for a level.
+     */
     void showLevel(const QString& title, const QString& description, bool hasNextLevel);
+    /**
+     * @brief Enables or disables the Next Level action after a solve check.
+     */
     // Enables Next Level only after a successful check.
     void setLevelSolved(bool solved);
+    /**
+     * @brief Shows or hides the panel for challenge mode.
+     */
     void setVisibleForChallenge(bool visible);
 
 signals:

@@ -8,6 +8,9 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Creates a target node with the given component identifier.
+ */
 TargetNode::TargetNode(const ComponentId id)
     : m_id(id)
 {

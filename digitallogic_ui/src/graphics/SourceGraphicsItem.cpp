@@ -18,6 +18,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs a source graphics item for the given component id.
+ */
 SourceGraphicsItem::SourceGraphicsItem(const ComponentId componentId, CircuitController* controller, QGraphicsItem* parent)
     : QGraphicsItemGroup(parent)
     , m_componentId(componentId)
@@ -45,11 +48,17 @@ SourceGraphicsItem::SourceGraphicsItem(const ComponentId componentId, CircuitCon
     setFlag(QGraphicsItem::ItemIsSelectable, true);
 }
 
+/**
+ * @brief Updates the displayed true/false value label.
+ */
 void SourceGraphicsItem::updateValueLabel(const SignalValue value)
 {
     m_label->setPlainText(QString::fromUtf8(toString(value)));
 }
 
+/**
+ * @brief Refreshes body and label appearance from the model signal value.
+ */
 void SourceGraphicsItem::refreshFromModel(const SignalValue value)
 {
     updateValueLabel(value);
@@ -59,6 +68,9 @@ void SourceGraphicsItem::refreshFromModel(const SignalValue value)
     }
 }
 
+/**
+ * @brief Sets the optional display label shown on the source.
+ */
 void SourceGraphicsItem::setDisplayLabel(const QString& label)
 {
     if (m_title != nullptr) {
@@ -66,12 +78,18 @@ void SourceGraphicsItem::setDisplayLabel(const QString& label)
     }
 }
 
+/**
+ * @brief Locks the source against toggle, move, and delete in challenge mode.
+ */
 void SourceGraphicsItem::setLocked(const bool locked)
 {
     m_locked = locked;
     setFlag(QGraphicsItem::ItemIsMovable, !locked);
 }
 
+/**
+ * @brief Clears simulation highlight styling from the source.
+ */
 void SourceGraphicsItem::clearSimulationHighlight()
 {
     m_body->setBrush(QBrush(AppTheme::componentFill()));
@@ -80,6 +98,9 @@ void SourceGraphicsItem::clearSimulationHighlight()
     }
 }
 
+/**
+ * @brief Toggles the source value on click when unlocked.
+ */
 void SourceGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     // Defer to SandboxView while a wire drag is active.
@@ -103,6 +124,9 @@ void SourceGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsItemGroup::mousePressEvent(event);
 }
 
+/**
+ * @brief Recomputes attached wire endpoints after the source moves.
+ */
 void SourceGraphicsItem::updateWirePaths()
 {
     if (m_controller != nullptr) {
@@ -110,6 +134,9 @@ void SourceGraphicsItem::updateWirePaths()
     }
 }
 
+/**
+ * @brief Syncs model position when the item is moved on the canvas.
+ */
 QVariant SourceGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemPositionHasChanged || change == ItemScenePositionHasChanged) {

@@ -1,3 +1,9 @@
+/**
+ * @file CircuitSerializerTests.cpp
+ * @brief Unit tests for Circuit JSON round-trip and invalid-wire rejection.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/Circuit.h"
 #include "digitallogic/model/CircuitSerializer.h"
 #include "digitallogic/model/PinIndices.h"
@@ -16,6 +22,9 @@ private slots:
     void fromJson_rejectsInvalidWire();
 };
 
+/**
+ * @brief Verifies toJson/fromJson preserve sources, gates, wires, and values.
+ */
 void CircuitSerializerTests::roundTrip_preservesCircuitTopology()
 {
     Circuit circuit;
@@ -40,10 +49,14 @@ void CircuitSerializerTests::roundTrip_preservesCircuitTopology()
     QCOMPARE(loaded->sources().size(), 2);
     QCOMPARE(static_cast<int>(loaded->gates().size()), 1);
     QCOMPARE(loaded->wires().size(), 2);
+    // Component ids are stable across serialization so findSource can reuse them.
     QCOMPARE(loaded->findSource(sourceA)->value(), SignalValue::True);
     QCOMPARE(loaded->findSource(sourceB)->value(), SignalValue::False);
 }
 
+/**
+ * @brief Verifies fromJson fails when the payload contains an illegal same-gate wire.
+ */
 void CircuitSerializerTests::fromJson_rejectsInvalidWire()
 {
     Circuit circuit;
@@ -52,6 +65,8 @@ void CircuitSerializerTests::fromJson_rejectsInvalidWire()
     QVERIFY(gateOpt.has_value());
     const ComponentId gate = gateOpt.value();
 
+    // Start from a valid serialization, then inject a same-component wire that
+    // validateWire would reject (NOT output back into its own input).
     QJsonObject json = CircuitSerializer::toJson(circuit);
     QJsonArray wires;
     // Same-component wire (gate output -> same gate input) must be rejected on load.

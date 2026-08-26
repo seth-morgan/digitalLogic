@@ -23,7 +23,14 @@ public:
      */
     SourceNode(ComponentId id, SignalValue initialValue = SignalValue::False);
 
+    /**
+     * @brief Returns this source's component identifier.
+     */
     [[nodiscard]] ComponentId id() const noexcept { return m_id; }
+
+    /**
+     * @brief Returns the current output signal value.
+     */
     [[nodiscard]] SignalValue value() const noexcept { return m_value; }
 
     /**

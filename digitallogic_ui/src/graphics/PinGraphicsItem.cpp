@@ -18,6 +18,9 @@ namespace {
 constexpr qreal kPinRadius = 9.0;
 }
 
+/**
+ * @brief Constructs a connection pin with the given id and role.
+ */
 PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, QGraphicsItem* parent)
     : QGraphicsEllipseItem(-kPinRadius, -kPinRadius, kPinRadius * 2.0, kPinRadius * 2.0, parent)
     , m_pinId(pinId)
@@ -31,11 +34,17 @@ PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, QGraphic
     setAcceptedMouseButtons(Qt::NoButton);
 }
 
+/**
+ * @brief Returns the pin center in scene coordinates.
+ */
 QPointF PinGraphicsItem::sceneCenter() const
 {
     return mapToScene(0.0, 0.0);
 }
 
+/**
+ * @brief Updates the pin fill color from a simulated signal value.
+ */
 void PinGraphicsItem::setSignalValue(const SignalValue value, const bool simulated)
 {
     m_value = value;
@@ -43,6 +52,9 @@ void PinGraphicsItem::setSignalValue(const SignalValue value, const bool simulat
     setBrush(QBrush(signalColor(value, simulated)));
 }
 
+/**
+ * @brief Highlights the pin while it is the start of a wire drag.
+ */
 void PinGraphicsItem::setPendingWire(const bool pending)
 {
     if (pending) {
