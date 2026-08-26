@@ -19,6 +19,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs a gate graphics item with the given kind and input count.
+ */
 GateGraphicsItem::GateGraphicsItem(const ComponentId componentId, const GateKind kind, const int inputCount,
                                    CircuitController* controller, QGraphicsItem* parent)
     : QGraphicsItemGroup(parent)
@@ -56,6 +59,9 @@ GateGraphicsItem::GateGraphicsItem(const ComponentId componentId, const GateKind
     applySelectionStyle();
 }
 
+/**
+ * @brief Applies selected/deselected border styling to the gate body.
+ */
 void GateGraphicsItem::applySelectionStyle()
 {
     if (m_body == nullptr) {
@@ -69,6 +75,9 @@ void GateGraphicsItem::applySelectionStyle()
     }
 }
 
+/**
+ * @brief Returns the short display label for a gate kind.
+ */
 QString GateGraphicsItem::gateLabel(const GateKind kind)
 {
     switch (kind) {
@@ -87,6 +96,9 @@ QString GateGraphicsItem::gateLabel(const GateKind kind)
     }
 }
 
+/**
+ * @brief Updates the output pin appearance from a simulated signal value.
+ */
 void GateGraphicsItem::setOutputSignal(const SignalValue value, const bool simulated)
 {
     m_body->setBrush(QBrush(signalColor(value, simulated)));
@@ -95,6 +107,9 @@ void GateGraphicsItem::setOutputSignal(const SignalValue value, const bool simul
     }
 }
 
+/**
+ * @brief Clears simulation highlight styling from the gate output.
+ */
 void GateGraphicsItem::clearSimulationHighlight()
 {
     m_body->setBrush(QBrush(AppTheme::componentFill()));
@@ -108,6 +123,9 @@ void GateGraphicsItem::clearSimulationHighlight()
     }
 }
 
+/**
+ * @brief Recomputes attached wire endpoints after the gate is moved.
+ */
 void GateGraphicsItem::updateWirePaths()
 {
     if (m_controller != nullptr) {
@@ -115,6 +133,9 @@ void GateGraphicsItem::updateWirePaths()
     }
 }
 
+/**
+ * @brief Syncs model position and selection style when the item changes.
+ */
 QVariant GateGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
 {
     // Persist model position and redraw attached wires when the gate is moved.
