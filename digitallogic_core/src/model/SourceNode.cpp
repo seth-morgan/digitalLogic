@@ -8,12 +8,18 @@
 
 namespace digitallogic {
 
+/**
+ * @brief Creates a source with the given identifier and initial value.
+ */
 SourceNode::SourceNode(const ComponentId id, const SignalValue initialValue)
     : m_id(id)
     , m_value(initialValue)
 {
 }
 
+/**
+ * @brief Toggles between false and true.
+ */
 void SourceNode::toggle() noexcept
 {
     // Flip between the two known logic levels (Unknown is not used for sources).
