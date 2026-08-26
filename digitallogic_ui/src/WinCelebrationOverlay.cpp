@@ -18,6 +18,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs the full-window win celebration overlay.
+ */
 WinCelebrationOverlay::WinCelebrationOverlay(QWidget* parent)
     : QWidget(parent)
 {
@@ -42,6 +45,9 @@ WinCelebrationOverlay::WinCelebrationOverlay(QWidget* parent)
     m_opacityEffect->setOpacity(0.0);
 }
 
+/**
+ * @brief Plays the celebration flash and banner animation.
+ */
 void WinCelebrationOverlay::play()
 {
     raise();
@@ -82,12 +88,18 @@ void WinCelebrationOverlay::play()
     update();
 }
 
+/**
+ * @brief Hides the overlay and resets celebration state when finished.
+ */
 void WinCelebrationOverlay::finishCelebration()
 {
     m_active = false;
     setVisible(false);
 }
 
+/**
+ * @brief Keeps overlay children sized to the parent window.
+ */
 void WinCelebrationOverlay::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
@@ -96,6 +108,9 @@ void WinCelebrationOverlay::resizeEvent(QResizeEvent* event)
     }
 }
 
+/**
+ * @brief Paints the full-window color flash during celebration.
+ */
 void WinCelebrationOverlay::paintEvent(QPaintEvent* event)
 {
     QWidget::paintEvent(event);
