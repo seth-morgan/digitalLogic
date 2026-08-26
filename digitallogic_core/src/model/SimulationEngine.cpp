@@ -20,17 +20,25 @@ namespace digitallogic {
 
 namespace {
 
+/**
+ * @brief Builds the output PinId for a source component.
+ */
 [[nodiscard]] PinId sourceOutputPin(const ComponentId componentId)
 {
     return PinId{componentId, sourceOutputPinIndex()};
 }
 
+/**
+ * @brief Builds the output PinId for a gate given its input arity.
+ */
 [[nodiscard]] PinId gateOutputPin(const ComponentId componentId, const int inputCount)
 {
     return PinId{componentId, gateOutputPinIndex(inputCount)};
 }
 
-// DFS cycle check: visiting = on the current path, visited = fully explored.
+/**
+ * @brief DFS cycle check: visiting = on the current path, visited = fully explored.
+ */
 [[nodiscard]] bool dependsOn(const Gate* gate, const Circuit& circuit, const QHash<ComponentId, QSet<ComponentId>>& adjacency, QSet<ComponentId>& visiting, QSet<ComponentId>& visited, QString& error)
 {
     if (visited.contains(gate->id())) {
@@ -61,6 +69,9 @@ namespace {
     return true;
 }
 
+/**
+ * @brief Returns a gate evaluation order, or empty if the circuit has a cycle.
+ */
 [[nodiscard]] std::optional<QVector<ComponentId>> topologicalOrder(const Circuit& circuit, QString& error)
 {
     // adjacency[gate] = set of upstream component ids that drive its inputs.
@@ -119,6 +130,9 @@ namespace {
     return order;
 }
 
+/**
+ * @brief Resolves a pin value from the map, falling back to live source values.
+ */
 [[nodiscard]] SignalValue resolvePin(const PinId& pin, const Circuit& circuit, const QHash<PinId, SignalValue>& resolved)
 {
     if (const auto it = resolved.find(pin); it != resolved.end()) {
@@ -135,31 +149,49 @@ namespace {
 
 } // namespace
 
+/**
+ * @brief Evaluates an AND over the given inputs (for unit tests).
+ */
 SignalValue SimulationEngine::evaluateAnd(const QVector<SignalValue>& inputs)
 {
     return AndGate(ComponentId{}).evaluate(inputs);
 }
 
+/**
+ * @brief Evaluates an OR over the given inputs (for unit tests).
+ */
 SignalValue SimulationEngine::evaluateOr(const QVector<SignalValue>& inputs)
 {
     return OrGate(ComponentId{}).evaluate(inputs);
 }
 
+/**
+ * @brief Evaluates a NOT of the given input (for unit tests).
+ */
 SignalValue SimulationEngine::evaluateNot(const SignalValue input)
 {
     return NotGate(ComponentId{}).evaluate(QVector<SignalValue>{input});
 }
 
+/**
+ * @brief Evaluates a NAND over the given inputs (for unit tests).
+ */
 SignalValue SimulationEngine::evaluateNand(const QVector<SignalValue>& inputs)
 {
     return NandGate(ComponentId{}).evaluate(inputs);
 }
 
+/**
+ * @brief Evaluates an XOR over the given inputs (for unit tests).
+ */
 SignalValue SimulationEngine::evaluateXor(const QVector<SignalValue>& inputs)
 {
     return XorGate(ComponentId{}).evaluate(inputs);
 }
 
+/**
+ * @brief Runs simulation over the given circuit and returns resolved pin values.
+ */
 std::optional<QVector<PinSignal>> SimulationEngine::run(const Circuit& circuit,
                                                         const QHash<ComponentId, SignalValue>* sourceOverrides)
 {
