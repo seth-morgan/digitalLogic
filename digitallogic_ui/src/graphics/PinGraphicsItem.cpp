@@ -7,7 +7,6 @@
 #include "digitallogic/ui/graphics/PinGraphicsItem.h"
 
 #include "digitallogic/ui/AppTheme.h"
-#include "digitallogic/ui/CircuitController.h"
 #include "digitallogic/ui/SignalColors.h"
 
 #include <QBrush>
@@ -19,11 +18,10 @@ namespace {
 constexpr qreal kPinRadius = 9.0;
 }
 
-PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, CircuitController* controller, QGraphicsItem* parent)
+PinGraphicsItem::PinGraphicsItem(const PinId pinId, const PinRole role, QGraphicsItem* parent)
     : QGraphicsEllipseItem(-kPinRadius, -kPinRadius, kPinRadius * 2.0, kPinRadius * 2.0, parent)
     , m_pinId(pinId)
     , m_role(role)
-    , m_controller(controller)
 {
     setBrush(QBrush(AppTheme::componentFill()));
     setPen(QPen(AppTheme::componentBorder(), 1.5));

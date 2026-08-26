@@ -19,7 +19,8 @@ namespace digitallogic::ui {
 ChallengePanelWidget::ChallengePanelWidget(QWidget* parent)
     : QWidget(parent)
 {
-    setStyleSheet(QStringLiteral("background-color: #262c38; border-bottom: 1px solid #2a3140;"));
+    setStyleSheet(QStringLiteral("background-color: %1; border-bottom: 1px solid %2;")
+                      .arg(AppTheme::surfaceElevated().name(), AppTheme::gridLine().name()));
 
     auto* layout = new QHBoxLayout(this);
     layout->setContentsMargins(12, 8, 12, 8);
@@ -27,10 +28,11 @@ ChallengePanelWidget::ChallengePanelWidget(QWidget* parent)
 
     auto* textColumn = new QVBoxLayout();
     m_titleLabel = new QLabel(this);
-    m_titleLabel->setStyleSheet(QStringLiteral("font-weight: bold; font-size: 15px; color: #eef1f6;"));
+    m_titleLabel->setStyleSheet(QStringLiteral("font-weight: bold; font-size: 15px; color: %1;")
+                                    .arg(AppTheme::textPrimary().name()));
     m_descriptionLabel = new QLabel(this);
     m_descriptionLabel->setWordWrap(true);
-    m_descriptionLabel->setStyleSheet(QStringLiteral("color: #9aa3b2; font-size: 13px;"));
+    m_descriptionLabel->setStyleSheet(QStringLiteral("color: %1; font-size: 13px;").arg(AppTheme::textMuted().name()));
     textColumn->addWidget(m_titleLabel);
     textColumn->addWidget(m_descriptionLabel);
     layout->addLayout(textColumn, 1);

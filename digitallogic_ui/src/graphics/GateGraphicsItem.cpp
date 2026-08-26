@@ -41,14 +41,13 @@ GateGraphicsItem::GateGraphicsItem(const ComponentId componentId, const GateKind
     // Space input pins evenly along the left edge (NOT has a single input).
     const double inputSpacing = bodyHeight / static_cast<double>(inputCount + 1);
     for (int inputIndex = 0; inputIndex < inputCount; ++inputIndex) {
-        auto* inputPin = new PinGraphicsItem(PinId{componentId, inputIndex}, PinGraphicsItem::PinRole::GateInput,
-                                               controller, this);
+        auto* inputPin = new PinGraphicsItem(PinId{componentId, inputIndex}, PinGraphicsItem::PinRole::GateInput, this);
         inputPin->setPos(-8.0, inputSpacing * static_cast<double>(inputIndex + 1));
         m_inputPins.push_back(inputPin);
     }
 
     m_outputPin = new PinGraphicsItem(PinId{componentId, gateOutputPinIndex(inputCount)}, PinGraphicsItem::PinRole::GateOutput,
-                                      controller, this);
+                                      this);
     m_outputPin->setPos(bodyWidth + 8.0, bodyHeight / 2.0);
 
     setFlag(QGraphicsItem::ItemIsMovable, true);

@@ -29,17 +29,16 @@ void SimulationController::runSimulation()
         return;
     }
 
-    m_lastResults.clear();
+    QHash<PinId, SignalValue> pinValues;
     for (const PinSignal& pinSignal : results.value()) {
-        m_lastResults.insert(pinSignal.pin, pinSignal.value);
+        pinValues.insert(pinSignal.pin, pinSignal.value);
     }
 
-    m_circuitController->applySimulationResults(m_lastResults);
+    m_circuitController->applySimulationResults(pinValues);
 }
 
 void SimulationController::resetSimulation()
 {
-    m_lastResults.clear();
     if (m_circuitController != nullptr) {
         m_circuitController->clearSimulationVisuals();
     }

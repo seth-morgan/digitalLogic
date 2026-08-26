@@ -35,8 +35,7 @@ TargetGraphicsItem::TargetGraphicsItem(const ComponentId componentId, CircuitCon
     m_valueLabel->setDefaultTextColor(AppTheme::textPrimary());
     m_valueLabel->setPos(34.0, 20.0);
 
-    m_inputPin = new PinGraphicsItem(PinId{componentId, targetInputPinIndex()}, PinGraphicsItem::PinRole::TargetInput,
-                                     controller, this);
+    m_inputPin = new PinGraphicsItem(PinId{componentId, targetInputPinIndex()}, PinGraphicsItem::PinRole::TargetInput, this);
     m_inputPin->setPos(-8.0, 25.0);
 
     // Targets are placement-locked; only challenge setup positions them.

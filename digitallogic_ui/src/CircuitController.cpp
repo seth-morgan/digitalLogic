@@ -30,7 +30,7 @@ namespace digitallogic::ui {
 
 namespace {
 
-constexpr qreal kPinHitRadius = 14.0;
+constexpr qreal kPinHitRadius = 14.0; // Slightly larger than PinGraphicsItem visual radius for easier clicking.
 
 // Recursively gather PinGraphicsItem children (pins live under source/gate/target groups).
 void collectPins(QGraphicsItem* item, QVector<PinGraphicsItem*>& pins)
@@ -48,6 +48,25 @@ void collectPins(QGraphicsItem* item, QVector<PinGraphicsItem*>& pins)
     }
 }
 
+// Scene scan shared by findSourceItem, findTargetItem, and findGateItem.
+template <typename ItemType>
+ItemType* findComponentItem(QGraphicsScene* scene, const ComponentId id)
+{
+    if (scene == nullptr) {
+        return nullptr;
+    }
+
+    for (QGraphicsItem* item : scene->items()) {
+        if (auto* componentItem = dynamic_cast<ItemType*>(item)) {
+            if (componentItem->componentId() == id) {
+                return componentItem;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
 } // namespace
 
 CircuitController::CircuitController(SandboxView* view, QObject* parent)
@@ -56,17 +75,26 @@ CircuitController::CircuitController(SandboxView* view, QObject* parent)
 {
 }
 
-void CircuitController::initializeDefaultSources()
+void CircuitController::resetChallengeState()
 {
     m_challengeMode = false;
     m_challengeTargetId = {};
     m_challengeSourceIdsByLabel.clear();
     clearChallengeGateBudget();
+}
 
+void CircuitController::addDefaultSources()
+{
     const ComponentId sourceA = m_circuit.addSource(QPointF(80.0, 120.0), SignalValue::False);
     const ComponentId sourceB = m_circuit.addSource(QPointF(80.0, 240.0), SignalValue::False);
     createSourceItem(sourceA, QPointF(80.0, 120.0));
     createSourceItem(sourceB, QPointF(80.0, 240.0));
+}
+
+void CircuitController::initializeDefaultSources()
+{
+    resetChallengeState();
+    addDefaultSources();
     emit circuitChanged();
 }
 
@@ -74,11 +102,9 @@ void CircuitController::restoreSandboxMode()
 {
     removeAllGraphics();
     m_circuit.clearAll();
-    m_challengeMode = false;
-    m_challengeTargetId = {};
-    m_challengeSourceIdsByLabel.clear();
-    clearChallengeGateBudget();
-    initializeDefaultSources();
+    resetChallengeState();
+    addDefaultSources();
+    emit circuitChanged();
 }
 
 void CircuitController::loadChallengeLevel(const ChallengeLevel& level, QHash<QString, ComponentId>& outSourceIdsByLabel,
@@ -285,12 +311,12 @@ bool CircuitController::placeGateFromPalette(const GateKind kind, const QPointF&
         return false;
     }
 
-    int inputCount = 2;
-    if (kind == GateKind::Not) {
-        inputCount = 1;
+    const Gate* gate = m_circuit.findGate(gateId.value());
+    if (gate == nullptr) {
+        return false;
     }
 
-    createGateItem(gateId.value(), kind, inputCount, scenePosition);
+    createGateItem(gateId.value(), kind, gate->inputCount(), scenePosition);
 
     if (m_challengeMode && m_challengeGateBudget.contains(kind)) {
         m_challengeGateBudget[kind] -= 1;
@@ -581,66 +607,31 @@ PinGraphicsItem* CircuitController::findPinAtScenePos(const QPointF& scenePos) c
     return closestPin;
 }
 
-WireGraphicsItem* CircuitController::findWireAtScenePos(const QPointF& scenePos) const
-{
-    for (WireGraphicsItem* wireItem : m_wireItems) {
-        if (wireItem != nullptr && wireItem->containsScenePoint(scenePos)) {
-            return wireItem;
-        }
-    }
-
-    return nullptr;
-}
-
 SourceGraphicsItem* CircuitController::findSourceItem(const ComponentId id) const
 {
-    if (m_view == nullptr || m_view->scene() == nullptr) {
+    if (m_view == nullptr) {
         return nullptr;
     }
 
-    for (QGraphicsItem* item : m_view->scene()->items()) {
-        if (auto* source = dynamic_cast<SourceGraphicsItem*>(item)) {
-            if (source->componentId() == id) {
-                return source;
-            }
-        }
-    }
-
-    return nullptr;
+    return findComponentItem<SourceGraphicsItem>(m_view->scene(), id);
 }
 
 TargetGraphicsItem* CircuitController::findTargetItem(const ComponentId id) const
 {
-    if (m_view == nullptr || m_view->scene() == nullptr) {
+    if (m_view == nullptr) {
         return nullptr;
     }
 
-    for (QGraphicsItem* item : m_view->scene()->items()) {
-        if (auto* target = dynamic_cast<TargetGraphicsItem*>(item)) {
-            if (target->componentId() == id) {
-                return target;
-            }
-        }
-    }
-
-    return nullptr;
+    return findComponentItem<TargetGraphicsItem>(m_view->scene(), id);
 }
 
 GateGraphicsItem* CircuitController::findGateItem(const ComponentId id) const
 {
-    if (m_view == nullptr || m_view->scene() == nullptr) {
+    if (m_view == nullptr) {
         return nullptr;
     }
 
-    for (QGraphicsItem* item : m_view->scene()->items()) {
-        if (auto* gate = dynamic_cast<GateGraphicsItem*>(item)) {
-            if (gate->componentId() == id) {
-                return gate;
-            }
-        }
-    }
-
-    return nullptr;
+    return findComponentItem<GateGraphicsItem>(m_view->scene(), id);
 }
 
 void CircuitController::applySimulationResults(const QHash<PinId, SignalValue>& pinValues)

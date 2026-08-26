@@ -7,7 +7,6 @@
 #pragma once
 
 #include <QAction>
-#include <QHash>
 #include <QMainWindow>
 
 class QLabel;
@@ -37,7 +36,7 @@ private:
     void openCircuit();
     void openChallengeMode();
     void showStatusMessage(const QString& message);
-    // Disables save/open/clear while challenge mode owns the canvas.
+    // Disables save/open while challenge mode owns the canvas.
     void setSandboxActionsEnabled(bool enabled);
     void resizeEvent(QResizeEvent* event) override;
 
@@ -51,7 +50,6 @@ private:
     QLabel* m_statusLabel{nullptr};
     QAction* m_saveAction{nullptr};
     QAction* m_openAction{nullptr};
-    QAction* m_clearAction{nullptr};
 };
 
 } // namespace digitallogic::ui

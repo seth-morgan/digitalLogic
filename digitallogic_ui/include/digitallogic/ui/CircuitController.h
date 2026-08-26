@@ -69,7 +69,6 @@ public:
 
     [[nodiscard]] PinGraphicsItem* findPin(const PinId& pinId) const;
     [[nodiscard]] PinGraphicsItem* findPinAtScenePos(const QPointF& scenePos) const;
-    [[nodiscard]] WireGraphicsItem* findWireAtScenePos(const QPointF& scenePos) const;
     [[nodiscard]] SourceGraphicsItem* findSourceItem(ComponentId id) const;
     [[nodiscard]] TargetGraphicsItem* findTargetItem(ComponentId id) const;
     [[nodiscard]] GateGraphicsItem* findGateItem(ComponentId id) const;
@@ -99,6 +98,8 @@ private:
     void rebuildGraphics();
     void clearPendingWireHighlight();
     void updatePreviewLine(const QPointF& scenePos);
+    void resetChallengeState();
+    void addDefaultSources();
 
     SandboxView* m_view;
     Circuit m_circuit;

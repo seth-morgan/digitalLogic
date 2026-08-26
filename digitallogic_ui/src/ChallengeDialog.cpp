@@ -35,15 +35,15 @@ ChallengeDialog::ChallengeDialog(QWidget* parent)
 
     // Accept only when a row is selected; store that index for the caller.
     connect(buttons, &QDialogButtonBox::accepted, this, [this]() {
-        if (m_levelList->currentRow() >= 0) {
-            m_selectedLevelIndex = m_levelList->currentRow();
+        if (QListWidgetItem* item = m_levelList->currentItem()) {
+            m_selectedLevelIndex = item->data(Qt::UserRole).toInt();
             accept();
         }
     });
     connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
     connect(m_levelList, &QListWidget::itemDoubleClicked, this, [this](QListWidgetItem* item) {
         if (item != nullptr) {
-            m_selectedLevelIndex = m_levelList->row(item);
+            m_selectedLevelIndex = item->data(Qt::UserRole).toInt();
             accept();
         }
     });

@@ -131,12 +131,11 @@ void MainWindow::openChallengeMode()
 // Save/Open are sandbox-only; challenge levels own the circuit layout.
 void MainWindow::setSandboxActionsEnabled(const bool enabled)
 {
-    const bool sandboxEnabled = enabled;
     if (m_saveAction != nullptr) {
-        m_saveAction->setEnabled(sandboxEnabled);
+        m_saveAction->setEnabled(enabled);
     }
     if (m_openAction != nullptr) {
-        m_openAction->setEnabled(sandboxEnabled);
+        m_openAction->setEnabled(enabled);
     }
 }
 

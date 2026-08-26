@@ -27,9 +27,6 @@ public:
     // Remaining counts per GateKind; buttons disable when a budget hits zero.
     void updateGateBudget(const QHash<GateKind, int>& remaining);
 
-signals:
-    void gateDragStarted(GateKind kind);
-
 protected:
     bool eventFilter(QObject* watched, QEvent* event) override;
 

@@ -38,7 +38,7 @@ SourceGraphicsItem::SourceGraphicsItem(const ComponentId componentId, CircuitCon
     m_label->setPos(26.0, 16.0);
 
     m_outputPin = new PinGraphicsItem(PinId{componentId, sourceOutputPinIndex()}, PinGraphicsItem::PinRole::SourceOutput,
-                                      controller, this);
+                                      this);
     m_outputPin->setPos(78.0, 20.0);
 
     setFlag(QGraphicsItem::ItemIsMovable, true);
@@ -97,7 +97,7 @@ void SourceGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
         }
     }
 
-    if (m_controller != nullptr) {
+    if (m_controller != nullptr && !m_locked) {
         m_controller->toggleSource(m_componentId);
     }
     QGraphicsItemGroup::mousePressEvent(event);

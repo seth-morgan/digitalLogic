@@ -6,12 +6,10 @@
  */
 #pragma once
 
-#include "digitallogic/model/PinId.h"
-#include "digitallogic/model/SignalValue.h"
 #include "digitallogic/model/SimulationEngine.h"
 
-#include <QHash>
 #include <QObject>
+#include <QString>
 
 namespace digitallogic::ui {
 
@@ -35,8 +33,6 @@ signals:
 
 private:
     CircuitController* m_circuitController;
-    // Cached so reset can clear the last painted pin colors.
-    QHash<PinId, SignalValue> m_lastResults;
 };
 
 } // namespace digitallogic::ui

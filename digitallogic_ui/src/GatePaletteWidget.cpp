@@ -7,8 +7,7 @@
 #include "digitallogic/ui/GatePaletteWidget.h"
 
 #include "digitallogic/ui/AppTheme.h"
-
-#include <QDrag>
+#include "digitallogic/ui/SandboxMimeTypes.h"
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QMouseEvent>
@@ -16,10 +15,6 @@
 #include <QPushButton>
 
 namespace digitallogic::ui {
-
-namespace {
-constexpr const char* kGateMimeType = "application/x-digitallogic-gate";
-}
 
 GatePaletteWidget::GatePaletteWidget(QWidget* parent)
     : QWidget(parent)
@@ -134,7 +129,6 @@ void GatePaletteWidget::startGateDrag(const GateKind kind, QWidget* sourceWidget
     auto* drag = new QDrag(sourceWidget);
     drag->setMimeData(mimeData);
     drag->exec(Qt::CopyAction);
-    emit gateDragStarted(kind);
 }
 
 } // namespace digitallogic::ui

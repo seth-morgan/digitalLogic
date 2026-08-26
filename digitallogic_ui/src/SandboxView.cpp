@@ -21,13 +21,7 @@
 #include <cmath>
 #include <QPainter>
 
-namespace digitallogic::ui {
-
-namespace {
-constexpr const char* kGateMimeType = "application/x-digitallogic-gate";
-}
-
-SandboxView::SandboxView(QWidget* parent)
+#include "digitallogic/ui/SandboxMimeTypes.h"
     : QGraphicsView(parent)
 {
     auto* scene = new QGraphicsScene(this);
@@ -137,6 +131,10 @@ void SandboxView::dropEvent(QDropEvent* event)
 
     // Palette encodes GateKind as a single byte in the custom MIME payload.
     const QByteArray payload = event->mimeData()->data(QString::fromLatin1(kGateMimeType));
+    if (payload.isEmpty()) {
+        return;
+    }
+
     const GateKind kind = static_cast<GateKind>(payload.at(0));
     const QPointF scenePos = mapToScene(event->position().toPoint());
 

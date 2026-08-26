@@ -7,6 +7,7 @@
 #pragma once
 
 #include <QObject>
+#include <QString>
 #include <optional>
 
 namespace digitallogic {
