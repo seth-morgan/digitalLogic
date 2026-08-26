@@ -17,12 +17,18 @@ std::atomic<std::uint64_t> g_nextComponentId{1};
 
 } // namespace
 
+/**
+ * @brief Allocates a new unique component identifier.
+ */
 ComponentId makeComponentId()
 {
     // Atomically claim the next id without requiring a mutex.
     return ComponentId{g_nextComponentId.fetch_add(1, std::memory_order_relaxed)};
 }
 
+/**
+ * @brief Resets the component id generator (used after loading a saved circuit).
+ */
 void seedComponentIdGenerator(const std::uint64_t nextValue)
 {
     // After deserialize, jump the counter past the highest loaded id.
