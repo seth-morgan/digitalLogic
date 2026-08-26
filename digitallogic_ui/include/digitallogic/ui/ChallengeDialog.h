@@ -19,12 +19,21 @@ class ChallengeDialog final : public QDialog {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Constructs the challenge level picker dialog.
+     */
     explicit ChallengeDialog(QWidget* parent = nullptr);
 
+    /**
+     * @brief Returns the selected level index, or -1 if none was accepted.
+     */
     // -1 until the user accepts a selection from the list.
     [[nodiscard]] int selectedLevelIndex() const noexcept { return m_selectedLevelIndex; }
 
 private:
+    /**
+     * @brief Populates the list widget from the challenge catalog.
+     */
     void populateLevels();
 
     QListWidget* m_levelList{nullptr};
