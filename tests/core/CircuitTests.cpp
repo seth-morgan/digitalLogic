@@ -1,3 +1,9 @@
+/**
+ * @file CircuitTests.cpp
+ * @brief Unit tests for Circuit wire validation and component removal.
+ * @author Seth Morgan
+ * @date 2026-08-25
+ */
 #include "digitallogic/model/Circuit.h"
 #include "digitallogic/model/PinIndices.h"
 #include "digitallogic/model/WireValidation.h"
@@ -16,16 +22,23 @@ private slots:
     void removeWire_removesOnlyMatchingWire();
 };
 
+/**
+ * @brief Ensures a wire cannot connect two pins on the same component.
+ */
 void CircuitTests::validateWire_rejectsSameComponent()
 {
     Circuit circuit;
     const ComponentId gateId = circuit.addGate(GateKind::And, QPointF(0.0, 0.0)).value();
+    // Output pin index 2 is the AND gate's single output (two inputs occupy 0 and 1).
     const PinId output{gateId, gateOutputPinIndex(2)};
     const PinId input{gateId, gateInputPinIndex(0)};
 
     QCOMPARE(circuit.validateWire(output, input), WireValidationResult::SameComponent);
 }
 
+/**
+ * @brief Ensures a second wire into an already-driven input is rejected.
+ */
 void CircuitTests::validateWire_rejectsDuplicateInput()
 {
     Circuit circuit;
@@ -39,6 +52,9 @@ void CircuitTests::validateWire_rejectsDuplicateInput()
     QCOMPARE(circuit.validateWire(sourceOut, gateInput), WireValidationResult::InputAlreadyConnected);
 }
 
+/**
+ * @brief Ensures removing a gate also deletes wires attached to its pins.
+ */
 void CircuitTests::removeGate_removesAttachedWires()
 {
     Circuit circuit;
@@ -55,6 +71,9 @@ void CircuitTests::removeGate_removesAttachedWires()
     QCOMPARE(static_cast<int>(circuit.gates().size()), 0);
 }
 
+/**
+ * @brief Ensures removeWire deletes only the matching connection.
+ */
 void CircuitTests::removeWire_removesOnlyMatchingWire()
 {
     Circuit circuit;
