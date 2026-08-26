@@ -1,6 +1,6 @@
 /**
  * @file OrGate.h
- * @brief Declares the multi-input OR gate used by the digital logic simulator.
+ * @brief Declares the two-input OR gate used by the digital logic simulator.
  * @author Seth Morgan
  * @date 2026-08-25
  */

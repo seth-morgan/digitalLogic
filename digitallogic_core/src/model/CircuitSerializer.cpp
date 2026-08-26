@@ -78,7 +78,14 @@ constexpr int kFormatVersion = 1; // Bump when the on-disk schema changes incomp
 
 [[nodiscard]] SignalValue signalFromJson(const QJsonValue& value)
 {
-    return value.toInt() != 0 ? SignalValue::True : SignalValue::False;
+    const int signalValue = value.toInt();
+    if (signalValue == static_cast<int>(SignalValue::True)) {
+        return SignalValue::True;
+    }
+    if (signalValue == static_cast<int>(SignalValue::False)) {
+        return SignalValue::False;
+    }
+    return SignalValue::Unknown;
 }
 
 } // namespace

@@ -12,6 +12,29 @@
 
 namespace digitallogic {
 
+namespace {
+
+// Shared gate factory used by addGate and addGateWithId so kind→type mapping lives in one place.
+[[nodiscard]] std::unique_ptr<Gate> createGate(const GateKind kind, const ComponentId id)
+{
+    switch (kind) {
+    case GateKind::And:
+        return std::make_unique<AndGate>(id);
+    case GateKind::Or:
+        return std::make_unique<OrGate>(id);
+    case GateKind::Not:
+        return std::make_unique<NotGate>(id);
+    case GateKind::Nand:
+        return std::make_unique<NandGate>(id);
+    case GateKind::Xor:
+        return std::make_unique<XorGate>(id);
+    default:
+        return nullptr;
+    }
+}
+
+} // namespace
+
 ComponentId Circuit::addSource(const QPointF& position, const SignalValue initialValue)
 {
     const ComponentId id = makeComponentId();
@@ -31,25 +54,8 @@ ComponentId Circuit::addTarget(const QPointF& position)
 std::optional<ComponentId> Circuit::addGate(const GateKind kind, const QPointF& position)
 {
     const ComponentId id = makeComponentId();
-    std::unique_ptr<Gate> gate;
-
-    switch (kind) {
-    case GateKind::And:
-        gate = std::make_unique<AndGate>(id);
-        break;
-    case GateKind::Or:
-        gate = std::make_unique<OrGate>(id);
-        break;
-    case GateKind::Not:
-        gate = std::make_unique<NotGate>(id);
-        break;
-    case GateKind::Nand:
-        gate = std::make_unique<NandGate>(id);
-        break;
-    case GateKind::Xor:
-        gate = std::make_unique<XorGate>(id);
-        break;
-    default:
+    std::unique_ptr<Gate> gate = createGate(kind, id);
+    if (gate == nullptr) {
         return std::nullopt;
     }
 
@@ -250,12 +256,12 @@ void Circuit::clearGatesAndWires(const bool keepTargets)
 
     // Keep source (and optionally target) placements so the canvas layout survives Clear.
     QHash<ComponentId, ComponentPlacement> preservedPlacements;
-    for (const SourceNode& source : m_sources) {
+    for (SourceNode& source : m_sources) {
         const auto placementIt = m_placements.find(source.id());
         if (placementIt != m_placements.end()) {
             preservedPlacements.insert(source.id(), placementIt.value());
         }
-        findSource(source.id())->setValue(SignalValue::False);
+        source.setValue(SignalValue::False);
     }
 
     if (keepTargets) {
@@ -298,24 +304,8 @@ bool Circuit::addGateWithId(const ComponentId id, const GateKind kind, const QPo
         return false;
     }
 
-    std::unique_ptr<Gate> gate;
-    switch (kind) {
-    case GateKind::And:
-        gate = std::make_unique<AndGate>(id);
-        break;
-    case GateKind::Or:
-        gate = std::make_unique<OrGate>(id);
-        break;
-    case GateKind::Not:
-        gate = std::make_unique<NotGate>(id);
-        break;
-    case GateKind::Nand:
-        gate = std::make_unique<NandGate>(id);
-        break;
-    case GateKind::Xor:
-        gate = std::make_unique<XorGate>(id);
-        break;
-    default:
+    std::unique_ptr<Gate> gate = createGate(kind, id);
+    if (gate == nullptr) {
         return false;
     }
 

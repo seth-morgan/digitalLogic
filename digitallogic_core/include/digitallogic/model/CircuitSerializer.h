@@ -16,6 +16,9 @@ namespace digitallogic {
 
 /**
  * @brief Serializes circuits to and from JSON without UI dependencies.
+ *
+ * @note Sandbox save files include sources, gates, and wires only. Challenge targets
+ *       are omitted because they are owned by the level catalog, not user circuits.
  */
 class CircuitSerializer final {
 public:

@@ -1,6 +1,8 @@
 /**
  * @file ComponentId.cpp
  * @brief Implements thread-safe allocation of unique ComponentId values.
+ *
+ * Factory functions declared in ComponentIdFactory.h are implemented here.
  * @author Seth Morgan
  * @date 2026-08-25
  */
