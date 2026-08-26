@@ -54,7 +54,9 @@ public:
     [[nodiscard]] virtual SignalValue evaluate(const QVector<SignalValue>& inputs) const = 0;
 
 protected:
-    // Concrete gates call this to register id, kind, and pin arity.
+    /**
+     * @brief Registers id, kind, and input arity for a concrete gate.
+     */
     Gate(ComponentId id, GateKind kind, int inputCount);
 
 private:
