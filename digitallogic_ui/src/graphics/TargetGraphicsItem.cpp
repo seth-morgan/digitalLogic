@@ -17,6 +17,9 @@
 
 namespace digitallogic::ui {
 
+/**
+ * @brief Constructs a target graphics item for the given component id.
+ */
 TargetGraphicsItem::TargetGraphicsItem(const ComponentId componentId, CircuitController* controller, QGraphicsItem* parent)
     : QGraphicsItemGroup(parent)
     , m_componentId(componentId)
@@ -44,6 +47,9 @@ TargetGraphicsItem::TargetGraphicsItem(const ComponentId componentId, CircuitCon
     setFlag(QGraphicsItem::ItemIsMovable, false);
 }
 
+/**
+ * @brief Updates the input appearance from a simulated signal value.
+ */
 void TargetGraphicsItem::setInputSignal(const SignalValue value, const bool simulated)
 {
     m_valueLabel->setPlainText(QString::fromUtf8(toString(value)));
@@ -53,6 +59,9 @@ void TargetGraphicsItem::setInputSignal(const SignalValue value, const bool simu
     }
 }
 
+/**
+ * @brief Clears simulation highlight styling from the target.
+ */
 void TargetGraphicsItem::clearSimulationHighlight()
 {
     m_body->setBrush(QBrush(AppTheme::componentFill()));
@@ -62,6 +71,9 @@ void TargetGraphicsItem::clearSimulationHighlight()
     }
 }
 
+/**
+ * @brief Recomputes attached wire endpoints after the target moves.
+ */
 void TargetGraphicsItem::updateWirePaths()
 {
     if (m_controller != nullptr) {
@@ -69,6 +81,9 @@ void TargetGraphicsItem::updateWirePaths()
     }
 }
 
+/**
+ * @brief Syncs model position when the item is moved on the canvas.
+ */
 QVariant TargetGraphicsItem::itemChange(const GraphicsItemChange change, const QVariant& value)
 {
     if (change == ItemPositionHasChanged || change == ItemScenePositionHasChanged) {
